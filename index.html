@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's Cooking? - Appwrite Commit Analysis</title>
+    <link rel="stylesheet" href="https://unpkg.com/@appwrite.io/pink" />
+    <link rel="stylesheet" href="https://unpkg.com/@appwrite.io/pink-icons" />
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #fd366e 0%, #f02e65 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        
+        .analysis-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f1f1f1;
+        }
+        
+        .coffee-btn {
+            background: #FFDD00;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s;
+        }
+        
+        .coffee-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 221, 0, 0.3);
+        }
+        
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 8px;
+            height: 100px;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .feature-badge {
+            background: linear-gradient(135deg, #fd366e, #f02e65);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .commit-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="heading-level-1">🍳 What's Cooking?</h1>
+            <p class="body-text-1" style="margin-top: 1rem; opacity: 0.9;">
+                Discover what's brewing in the Appwrite kitchen! AI-powered analysis of the latest commits.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 2rem 0;">
+        <!-- How It Works Section -->
+        <div class="analysis-card" style="background: linear-gradient(135deg, #fff9fc, #ffffff); border: 1px solid #ffe6f0;">
+            <div class="feature-badge" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">ℹ️ How It Works</div>
+            <h2 class="heading-level-2" style="margin-bottom: 1rem;">Behind the Scenes</h2>
+            <div class="body-text-1">
+                <p style="margin-bottom: 1rem;">
+                    This tool automatically monitors the <strong>Appwrite GitHub repository</strong> using an intelligent analysis system:
+                </p>
+                <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                    <li style="margin-bottom: 0.5rem;">🕐 <strong>Automated Schedule:</strong> A cron job runs every 24 hours to check for new activity</li>
+                    <li style="margin-bottom: 0.5rem;">🔍 <strong>Smart Analysis:</strong> Examines the latest 5 commits for significant code additions</li>
+                    <li style="margin-bottom: 0.5rem;">🤖 <strong>AI-Powered Detection:</strong> Uses AI to identify potential new features</li>
+                    <li style="margin-bottom: 0.5rem;">📊 <strong>Real-time Updates:</strong> Analysis results are automatically published here</li>
+                </ul>
+                <p style="color: #666; font-size: 0.9rem; margin-top: 1rem;">
+                    <em>Get early insights into what's cooking in the Appwrite kitchen before official announcements! 🍳</em>
+                </p>
+            </div>
+        </div>
+
+        <!-- Analysis Results -->
+        <div id="analysisContainer">
+            <!-- Loading State -->
+            <div id="loadingState">
+                <div class="analysis-card">
+                    <div class="feature-badge">🔍 Analyzing Latest Commits</div>
+                    <div class="loading-skeleton"></div>
+                    <p class="body-text-2" style="text-align: center; margin-top: 1rem;">
+                        Fetching and analyzing the latest Appwrite commits...
+                    </p>
+                </div>
+            </div>
+
+            <!-- Results will be populated here -->
+            <div id="resultsContainer" style="display: none;">
+                <!-- New Features Analysis -->
+                <div class="analysis-card">
+                    <div class="feature-badge">🚀 Potential New Features</div>
+                    <h2 class="heading-level-2" style="margin-bottom: 1rem;">Feature Detection Analysis</h2>
+                    <div id="newFeaturesContent" class="body-text-1"></div>
+                </div>
+
+                <!-- Commit Summary -->
+                <div class="analysis-card">
+                    <div class="feature-badge">📋 Commit Summary</div>
+                    <h2 class="heading-level-2" style="margin-bottom: 1rem;">Recent Activity Overview</h2>
+                    <div id="summaryContent" class="body-text-1"></div>
+                </div>
+
+                <!-- Last Updated -->
+                <div class="commit-meta" style="text-align: center; margin-top: 2rem;">
+                    <span id="lastUpdated"></span>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" style="display: none;">
+                <div class="analysis-card" style="border-left: 4px solid #fd366e;">
+                    <h3 class="heading-level-3" style="color: #fd366e;">⚠️ Analysis Failed</h3>
+                    <p class="body-text-2">
+                        Unable to fetch the latest analysis. Please try refreshing the page.
+                    </p>
+                    <button onclick="loadAnalysis()" class="button is-secondary" style="margin-top: 1rem;">
+                        <span class="icon-refresh"></span>
+                        Retry Analysis
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Support Section -->
+        <div style="text-align: center; margin-top: 3rem; padding: 1rem; border-top: 1px solid #e0e0e0;">
+            <p class="body-text-2" style="color: #888; font-size: 0.85rem; margin-bottom: 0.5rem;">
+                Enjoying this tool? 
+                <a href="https://buymeacoffee.com/yourusername" target="_blank" style="color: #fd366e; text-decoration: none; font-weight: 500;">
+                    ☕ Buy me a coffee
+                </a>
+            </p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: #f8f9fa; padding: 2rem 0; margin-top: 4rem; text-align: center;">
+        <div class="container">
+            <p class="body-text-2" style="color: #666;">
+                Made with ❤️ using Appwrite Pink • Data from 
+                <a href="https://github.com/appwrite/appwrite" target="_blank" style="color: #fd366e;">Appwrite GitHub</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Appwrite Web SDK -->
+    <script src="https://unpkg.com/appwrite@13.0.1/dist/iife/sdk.js"></script>
+    
+    <script>
+        // Appwrite configuration
+        const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
+        const APPWRITE_PROJECT_ID = '6890d2c90034c3369acd';
+        const DATABASE_ID = '6890ded500064cf8b023';
+        const COLLECTION_ID = '6890dee0000a5ecd829e';
+
+        // Initialize Appwrite
+        const { Client, Databases, Query } = Appwrite;
+        const client = new Client();
+        client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
+        const databases = new Databases(client);
+
+        // Load analysis data
+        async function loadAnalysis() {
+            const loadingState = document.getElementById('loadingState');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const errorState = document.getElementById('errorState');
+
+            // Show loading state
+            loadingState.style.display = 'block';
+            resultsContainer.style.display = 'none';
+            errorState.style.display = 'none';
+
+            try {
+                console.log('Fetching documents from Appwrite...');
+                // Fetch the latest analysis document using queries
+                const response = await databases.listDocuments(
+                    DATABASE_ID,
+                    COLLECTION_ID,
+                    [
+                        Query.orderDesc('$createdAt'),
+                        Query.limit(1)
+                    ]
+                );
+
+                console.log('Appwrite response:', response);
+
+                if (response.documents.length > 0) {
+                    const latestAnalysis = response.documents[0];
+                    console.log('Latest analysis:', latestAnalysis);
+                    displayResults(latestAnalysis);
+                } else {
+                    throw new Error('No analysis data found');
+                }
+            } catch (error) {
+                console.error('Error loading analysis:', error);
+                showError();
+            }
+        }
+
+        function displayResults(data) {
+            const loadingState = document.getElementById('loadingState');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const newFeaturesContent = document.getElementById('newFeaturesContent');
+            const summaryContent = document.getElementById('summaryContent');
+            const lastUpdated = document.getElementById('lastUpdated');
+
+            // Hide loading, show results
+            loadingState.style.display = 'none';
+            resultsContainer.style.display = 'block';
+
+            // Populate content
+            newFeaturesContent.innerHTML = formatText(data.newFeaturesAnalysis);
+            summaryContent.innerHTML = formatText(data.summary);
+            
+            // Set last updated time
+            const updateTime = new Date(data.$createdAt).toLocaleString();
+            lastUpdated.textContent = `Last updated: ${updateTime}`;
+        }
+
+        function showError() {
+            const loadingState = document.getElementById('loadingState');
+            const errorState = document.getElementById('errorState');
+            
+            loadingState.style.display = 'none';
+            errorState.style.display = 'block';
+        }
+
+        function formatText(text) {
+            if (!text) return 'No data available';
+            
+            // Convert markdown formatting to HTML
+            let html = text
+                // Headers
+                .replace(/^### (.*$)/gm, '<h3 class="heading-level-3" style="margin: 1.5rem 0 0.5rem 0;">$1</h3>')
+                .replace(/^## (.*$)/gm, '<h2 class="heading-level-2" style="margin: 1.5rem 0 0.5rem 0;">$1</h2>')
+                .replace(/^# (.*$)/gm, '<h1 class="heading-level-1" style="margin: 1.5rem 0 0.5rem 0;">$1</h1>')
+                
+                // Bold and italic
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                
+                // Code blocks (triple backticks)
+                .replace(/```([\s\S]*?)```/g, '<pre style="background: #f5f5f5; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0;"><code>$1</code></pre>')
+                
+                // Inline code
+                .replace(/`([^`]+)`/g, '<code style="background: #f0f0f0; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace;">$1</code>')
+                
+                // Unordered lists
+                .replace(/^\* (.*$)/gm, '<li>$1</li>')
+                .replace(/^- (.*$)/gm, '<li>$1</li>')
+                
+                // Ordered lists
+                .replace(/^\d+\. (.*$)/gm, '<li>$1</li>')
+                
+                // Links
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color: #fd366e; text-decoration: none;">$1</a>')
+                
+                // Blockquotes
+                .replace(/^> (.*$)/gm, '<blockquote style="border-left: 4px solid #fd366e; padding-left: 1rem; margin: 1rem 0; font-style: italic;">$1</blockquote>')
+                
+                // Line breaks and paragraphs
+                .replace(/\n\n/g, '</p><p class="body-text-1" style="margin: 1rem 0;">')
+                .replace(/\n/g, '<br>');
+            
+            // Wrap consecutive list items in ul/ol tags
+            html = html.replace(/(<li>.*?<\/li>)(\s*<li>.*?<\/li>)*/g, function(match) {
+                return '<ul style="margin: 1rem 0; padding-left: 1.5rem;">' + match + '</ul>';
+            });
+            
+            // Wrap in initial paragraph if it doesn't start with a block element
+            if (!html.match(/^<(h[1-6]|div|p|ul|ol|blockquote|pre)/)) {
+                html = '<p class="body-text-1" style="margin: 1rem 0;">' + html;
+            }
+            
+            // Close final paragraph if needed
+            if (!html.match(/<\/(h[1-6]|div|p|ul|ol|blockquote|pre)>$/)) {
+                html += '</p>';
+            }
+            
+            return html;
+        }
+
+        // Load analysis on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, starting analysis...');
+            loadAnalysis();
+        });
+
+        // Auto-refresh every 5 minutes
+        setInterval(loadAnalysis, 5 * 60 * 1000);
+    </script>
+</body>
+</html>
