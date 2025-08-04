@@ -5,8 +5,10 @@ import time
 from appwrite.client import Client
 from openai import OpenAI
 import os
+import dotenv
 
-client = OpenAI(api_key=os.getenv("DEEPSEEK_API_KEY"), base_url="https://api.deepseek.com")
+dotenv.load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url="https://api.deepseek.com")
 
 
 data = []
@@ -31,7 +33,7 @@ def get_new_lines(patch):
 feed = feedparser.parse(ATOM_FEED)
 
 def main(context):
-    for entry in feed.entries[:10]:
+    for entry in feed.entries[:5]:
         api_url = f"https://api.github.com/repos/appwrite/appwrite/commits/{extract_sha(entry.link)}"
         response = requests.get(api_url, headers=headers)
         if response.status_code == 200:
@@ -61,7 +63,7 @@ def main(context):
     res = client.chat.completions.create(
     model="deepseek-chat",
     messages=[
-        {"role": "system", "content": "You are a helpful assistant which is given the past 10 commits and new lines of the Appwrite GitHub respository. THe Appwrite team sometimes adds new features in the code but prevent users from using them by using feature flags. Your job is to look at these commits and if you recognise that a new potential feature has been added (something that isn't yet in Appwrite), you must summarise the changes which made you notice this and give your best guess as to what it could be."},
+        {"role": "system", "content": "You are a helpful assistant which is given the past 10 commits and new lines of the Appwrite GitHub respository. THe Appwrite team sometimes adds new features in the code but prevent users from using them by using feature flags. Your job is to look at these commits and if you recognise that a new potential feature has been added (something that isn't yet in Appwrite), you must summarise the changes which made you notice this and give your best guess as to what it could be. Your response will be shown on a website, so then don't say stuff like 'Ask me for more info if you want', etc."},
         {"role": "user", "content": f"Last 10 commits of appwrite: {data}"},
     ],
     stream=False
@@ -72,20 +74,17 @@ def main(context):
     res = client.chat.completions.create(
     model="deepseek-chat",
     messages=[
-        {"role": "system", "content": ""},
+        {"role": "system", "content": "Summarise these GitHub Commits in a clear, concise and beautiful way."},
         {"role": "user", "content": f"Last 10 commits of appwrite: {data}"},
     ],
     stream=False
     )
-
     
-        
-    context.res.json({
+    summary_response = res.choices[0].message.content
+       
+    print({
         "status": "success",
-        "data": data
+        "analysis": anaylsis_response,
+        "summary": summary_response
     })
-
-
-
-        
         
