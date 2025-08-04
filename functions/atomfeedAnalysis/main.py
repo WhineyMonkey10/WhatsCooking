@@ -41,7 +41,7 @@ def main(context):
     client = Client()
     client.set_endpoint('https://fra.cloud.appwrite.io/v1')
     client.set_project('6890d2c90034c3369acd')
-    client.set_key(context.req.headers('x-appwrite-key'))
+    client.set_key(context.req.headers.get('x-appwrite-key'))
     
     databases = Databases(client)
     
