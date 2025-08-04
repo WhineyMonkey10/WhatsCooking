@@ -13,7 +13,7 @@ from appwrite.id import ID
 
 
 dotenv.load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url="https://api.deepseek.com")
+AIclient = OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url="https://api.deepseek.com")
 
 
 data = []
@@ -72,7 +72,7 @@ def main(context):
         time.sleep(1)
         
     # now we send this stuff into deepseek to anayalse for any possible new features coming up
-    res = client.chat.completions.create(
+    res = AIclient.chat.completions.create(
     model="deepseek-chat",
     messages=[
         {"role": "system", "content": "You are a helpful assistant which is given the past 10 commits and new lines of the Appwrite GitHub respository. THe Appwrite team sometimes adds new features in the code but prevent users from using them by using feature flags. Your job is to look at these commits and if you recognise that a new potential feature has been added (something that isn't yet in Appwrite), you must summarise the changes which made you notice this and give your best guess as to what it could be. Your response will be shown on a website, so then don't say stuff like 'Ask me for more info if you want', etc."},
@@ -83,7 +83,7 @@ def main(context):
 
     anaylsis_response = res.choices[0].message.content
     
-    res = client.chat.completions.create(
+    res = AIclient.chat.completions.create(
     model="deepseek-chat",
     messages=[
         {"role": "system", "content": "Summarise these GitHub Commits in a clear, concise and beautiful way."},
