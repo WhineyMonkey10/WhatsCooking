@@ -105,7 +105,7 @@ def main(context):
 
     )
     
-    context.res.json({
+    return context.res.json({
         "status": documentCreationRes
     })
         
