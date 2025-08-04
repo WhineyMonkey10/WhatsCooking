@@ -82,7 +82,7 @@ def main(context):
     
     summary_response = res.choices[0].message.content
        
-    print({
+    context.res.json({
         "status": "success",
         "analysis": anaylsis_response,
         "summary": summary_response
