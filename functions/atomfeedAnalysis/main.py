@@ -10,11 +10,7 @@ from appwrite.client import Client
 from appwrite.services.databases import Databases
 from appwrite.id import ID
 
-client = Client()
-client.set_endpoint('https://fra.cloud.appwrite.io/v1') # Your API Endpoint
-client.set_project('6890d2c90034c3369acd') # Your project ID
 
-databases = Databases(client)
 
 dotenv.load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url="https://api.deepseek.com")
@@ -42,6 +38,13 @@ def get_new_lines(patch):
 feed = feedparser.parse(ATOM_FEED)
 
 def main(context):
+    client = Client()
+    client.set_endpoint('https://fra.cloud.appwrite.io/v1')
+    client.set_project('6890d2c90034c3369acd')
+    client.set_key(context.req('x-appwrite-key'))
+    
+    databases = Databases(client)
+    
     for entry in feed.entries[:5]:
         api_url = f"https://api.github.com/repos/appwrite/appwrite/commits/{extract_sha(entry.link)}"
         response = requests.get(api_url, headers=headers)
