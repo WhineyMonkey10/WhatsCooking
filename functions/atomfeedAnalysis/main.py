@@ -6,6 +6,15 @@ from appwrite.client import Client
 from openai import OpenAI
 import os
 import dotenv
+from appwrite.client import Client
+from appwrite.services.databases import Databases
+from appwrite.id import ID
+
+client = Client()
+client.set_endpoint('https://fra.cloud.appwrite.io/v1') # Your API Endpoint
+client.set_project('6890d2c90034c3369acd') # Your project ID
+
+databases = Databases(client)
 
 dotenv.load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url="https://api.deepseek.com")
@@ -81,10 +90,19 @@ def main(context):
     )
     
     summary_response = res.choices[0].message.content
-       
+    
+    documentCreationRes = databases.create_document(
+    database_id = '6890ded500064cf8b023',
+    collection_id = '6890dee0000a5ecd829e',
+    document_id = ID.unique(),
+    data = {
+        "summary": summary_response,
+        "newFeaturesAnalysis": anaylsis_response
+        },
+
+    )
+    
     context.res.json({
-        "status": "success",
-        "analysis": anaylsis_response,
-        "summary": summary_response
+        "status": documentCreationRes
     })
         
