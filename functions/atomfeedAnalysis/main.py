@@ -105,7 +105,7 @@ def main(context):
         # no strucuted lllm here since it's jisut a summary
 
         res = llm.invoke([
-            SystemMessage("Summarise these GitHub Commits in a clear, concise and beautiful way. Use markdown, however do not use a title. Your format should always be the following (of course with new lines in the appropriate places): Summary Title         Summary Details          Embedded link to the commit"),
+            SystemMessage("Summarise these GitHub Commits in a clear, concise and beautiful way. Use markdown, however do not use a title. Your format should always be the following (of course with new lines in the appropriate places): Summary Title         Summary Details          Embedded link to the commit. Ensure to format this in markdown."),
             HumanMessage(f"Here is the data for the previous 10 commits of the Appwrite Github repo: {data}")
         ])
         
