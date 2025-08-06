@@ -130,6 +130,3 @@ def main(context):
     
     return context.res.empty()
     #print(documentCreationRes)
-        
-        
-main(context=None)
