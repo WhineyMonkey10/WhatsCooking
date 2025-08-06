@@ -3,17 +3,19 @@ import requests
 import re
 import time
 from appwrite.client import Client
-from openai import OpenAI
+from pydantic import BaseModel, Field
 import os
 import dotenv
 from appwrite.client import Client
 from appwrite.services.databases import Databases
 from appwrite.id import ID
-
+from langchain.chat_models import init_chat_model
+from typing_extensions import Annotated, TypedDict
+from langchain_core.messages import HumanMessage, SystemMessage
 
 
 dotenv.load_dotenv()
-AIclient = OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url="https://api.deepseek.com")
+
 
 
 data = []
@@ -23,6 +25,17 @@ ATOM_FEED = "https://github.com/appwrite/appwrite/commits.atom"
 headers = {
     "Accept": "application/vnd.github.v3+json"
 }
+
+# ai init stuff
+
+class AnalysisFormat(BaseModel):
+    """This is the response format for all AI responses for analysis."""
+    analysis: str = Field(description="A short summary of what you believe to be a hidden feature, if no hidden features were found, ensure to make it very clearly stated in this part.")
+    foundHiddenFeature: bool = Field(description="Whether or not you have detected a possible hidden feature in the Appwrite codebase commits provided to you.")
+
+llm = init_chat_model("gemini-2.5-flash", model_provider="google_genai") # init gemini
+structured_llm = llm.with_structured_output(AnalysisFormat) # init strucuted response gemini that we can invoke later
+
 
 def extract_sha(url):
     match = re.search(r'/commit/([0-9a-f]{40})', url)
@@ -45,7 +58,7 @@ def main(context):
     
     databases = Databases(client)
     
-    for entry in feed.entries[:5]:
+    for entry in feed.entries[:10]:
         api_url = f"https://api.github.com/repos/appwrite/appwrite/commits/{extract_sha(entry.link)}"
         response = requests.get(api_url, headers=headers)
         if response.status_code == 200:
@@ -70,29 +83,27 @@ def main(context):
         else:
             print(f"Failed to fetch commit data: {response.status_code}")
         time.sleep(1)
-        
-    # now we send this stuff into deepseek to anayalse for any possible new features coming up
-    res = AIclient.chat.completions.create(
-    model="deepseek-chat",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant which is given the past 10 commits and new lines of the Appwrite GitHub respository. THe Appwrite team sometimes adds new features in the code but prevent users from using them by using feature flags. Your job is to look at these commits and if you recognise that a new potential feature has been added (something that isn't yet in Appwrite), you must summarise the changes which made you notice this and give your best guess as to what it could be. Your response will be shown on a website, so then don't say stuff like 'Ask me for more info if you want', etc."},
-        {"role": "user", "content": f"Last 10 commits of appwrite: {data}"},
-    ],
-    stream=False
-    )
+         
+    resStructered = structured_llm.invoke([
+        SystemMessage("You are a helpful assistant which is given the past 10 commits and new lines of the Appwrite GitHub respository. THe Appwrite team sometimes adds new features in the code but prevent users from using them by using feature flags. Your job is to look at these commits and if you recognise that a new potential feature has been added (something that isn't yet in Appwrite), you must summarise the changes which made you notice this and give your best guess as to what it could be. Your response will be shown on a website, so then don't say stuff like 'Ask me for more info if you want', etc."),
+        HumanMessage(f"Here is the data for the previous 10 commits of the Appwrite Github repo: {data}")
+    ])
+    
+    #print(resStructered)
 
-    anaylsis_response = res.choices[0].message.content
     
-    res = AIclient.chat.completions.create(
-    model="deepseek-chat",
-    messages=[
-        {"role": "system", "content": "Summarise these GitHub Commits in a clear, concise and beautiful way."},
-        {"role": "user", "content": f"Last 10 commits of appwrite: {data}"},
-    ],
-    stream=False
-    )
+    # no strucuted lllm here since it's jisut a summary
+
+    res = llm.invoke([
+        SystemMessage("Summarise these GitHub Commits in a clear, concise and beautiful way. Use markdown, however do not use a title. Your format should always be the following (of course with new lines in the appropriate places): Summary Title         Summary Details          Embedded link to the commit"),
+        HumanMessage(f"Here is the data for the previous 10 commits of the Appwrite Github repo: {data}")
+    ])
     
-    summary_response = res.choices[0].message.content
+    #print(res)
+    
+    summary_response = res.content
+    
+    #print(summary_response)
     
     documentCreationRes = databases.create_document(
     database_id = '6890ded500064cf8b023',
@@ -100,12 +111,18 @@ def main(context):
     document_id = ID.unique(),
     data = {
         "summary": summary_response,
-        "newFeaturesAnalysis": anaylsis_response
+        "newFeaturesAnalysis": resStructered.analysis, # fetch the potential analysis from the strucuted ai response
+        "newFeatureFlag": bool(resStructered.foundHiddenFeature)
         },
 
     )
     
     return context.res.json({
+    
         "status": documentCreationRes
+    
     })
+    #print(documentCreationRes)
         
+        
+main(context=None)
