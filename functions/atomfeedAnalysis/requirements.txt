@@ -1,5 +1,8 @@
 feedparser
 requests
-python-dotenv
 appwrite
-openai
+pydantic
+python-dotenv
+langchain
+langchain-google-genai
+typing-extensions

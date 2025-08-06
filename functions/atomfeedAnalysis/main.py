@@ -54,7 +54,7 @@ def main(context):
     databases = Databases(client)
     
     """
-    Expected request body:
+    Expected request body: (for now its just hardcoded as appwrite doesn't allow cronjobs with custom bodies!)
     
     {
         "trackedVersions": ["1.7.x", "1.8.x"] 
@@ -63,7 +63,8 @@ def main(context):
     so that i dont need to update the code whenver a new version is reelased and i can just
     change the cronjob stuff
     """
-    tracked_versions = context.req.body.get('trackedVersions', [])
+    #tracked_versions = context.req.body.get('trackedVersions', [])
+    tracked_versions = ["1.7.x", "1.8.x"]
 
     for versionToTrack in tracked_versions:
         feed = feedparser.parse(f"https://github.com/appwrite/appwrite/commits/{versionToTrack}.atom")
