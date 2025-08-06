@@ -4,202 +4,769 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>What's Cooking? - Appwrite Commit Analysis</title>
-    <link rel="stylesheet" href="https://unpkg.com/@appwrite.io/pink" />
-    <link rel="stylesheet" href="https://unpkg.com/@appwrite.io/pink-icons" />
     <script defer src="https://cloud.umami.is/script.js" data-website-id="84041bf7-aed6-4ce5-8fb9-770429d66dcd"></script>
+    <script src="https://unpkg.com/appwrite@13.0.1/dist/iife/sdk.js"></script>
     <style>
-        .hero-section {
-            background: linear-gradient(135deg, #fd366e 0%, #f02e65 100%);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #374151;
+            background: linear-gradient(135deg, #faf5ff 0%, #ffffff 50%, #fef7f7 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #9333ea 0%, #ec4899 50%, #ef4444 100%);
             color: white;
-            padding: 4rem 0;
+            padding: 5rem 0;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
-        
-        .analysis-card {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            margin: 1.5rem 0;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-            border: 1px solid #f1f1f1;
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.1);
         }
-        
-        .coffee-btn {
-            background: #FFDD00;
-            color: #000;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-icon {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: transform 0.2s;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
-        
-        .coffee-btn:hover {
+
+        .hero-icon-bg {
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 1rem auto 2rem;
+        }
+
+        .hero-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(255, 221, 0, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
-        
-        .loading-skeleton {
+
+        .card-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-title.large {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #9333ea, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* How It Works Grid */
+        .how-it-works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .step-card {
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .step-icon {
+            width: 4rem;
+            height: 4rem;
+            margin: 0 auto 1rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .step-card:hover .step-icon {
+            transform: scale(1.1);
+        }
+
+        .step-icon.blue { background: linear-gradient(135deg, #3b82f6, #06b6d4); }
+        .step-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
+        .step-icon.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .step-icon.orange { background: linear-gradient(135deg, #f97316, #ea580c); }
+
+        .step-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        /* Form Elements */
+        .form-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.5rem;
+        }
+
+        .select {
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            background: white;
+            font-size: 0.875rem;
+            min-width: 160px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .select:focus {
+            outline: none;
+            border-color: #9333ea;
+            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #9333ea, #ec4899);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(147, 51, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* Loading States */
+        .loading-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #9333ea;
+            font-weight: 500;
+        }
+
+        .spinner {
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 2px solid #e5e7eb;
+            border-top: 2px solid #9333ea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .skeleton {
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
             background-size: 200% 100%;
             animation: loading 1.5s infinite;
-            border-radius: 8px;
-            height: 100px;
+            border-radius: 0.5rem;
         }
-        
+
         @keyframes loading {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
         }
-        
-        .feature-badge {
-            background: linear-gradient(135deg, #fd366e, #f02e65);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-block;
+
+        .skeleton-line {
+            height: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .skeleton-block {
+            height: 8rem;
+            margin: 1rem 0;
+        }
+
+        /* Analysis Results */
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .analysis-icon {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .analysis-icon.purple { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+        .analysis-icon.blue { background: linear-gradient(135deg, #3b82f6, #06b6d4); }
+        .analysis-icon.orange { background: linear-gradient(135deg, #f97316, #ea580c); }
+
+        .analysis-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.version {
+            background: #ede9fe;
+            color: #7c3aed;
+            border: 1px solid #c4b5fd;
+        }
+
+        .status-badge.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-badge.neutral {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        /* History Section */
+        .history-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .history-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .history-item.has-feature {
+            border-left: 4px solid #10b981;
+        }
+
+        .history-item.no-feature {
+            border-left: 4px solid #6b7280;
+        }
+
+        .history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: 1rem;
         }
-        
-        .commit-meta {
-            color: #666;
-            font-size: 0.9rem;
+
+        .history-date {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .history-content {
+            display: none;
+            padding-top: 1rem;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .history-content.expanded {
+            display: block;
+        }
+
+        /* Alert */
+        .alert {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .alert.error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+            padding: 2rem 0;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .support-section {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem 0;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .support-section a {
+            color: #9333ea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .support-section a:hover {
+            color: #7c3aed;
+        }
+
+        /* Icons (using Unicode symbols) */
+        .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            display: inline-block;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+            .card { padding: 1.5rem; }
+            .analysis-header { flex-direction: column; align-items: flex-start; }
+            .how-it-works-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Prose styling for content */
+        .prose {
+            line-height: 1.7;
+        }
+
+        .prose h1, .prose h2, .prose h3 {
+            color: #1f2937;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        .prose h1 { font-size: 1.5rem; }
+        .prose h2 { font-size: 1.25rem; }
+        .prose h3 { font-size: 1.125rem; }
+
+        .prose p {
             margin-bottom: 1rem;
+            color: #4b5563;
+        }
+
+        .prose ul {
+            list-style: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .prose li {
+            margin-bottom: 0.25rem;
+        }
+
+        .prose code {
+            background: #f3f4f6;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+
+        .prose pre {
+            background: #f3f4f6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .prose a {
+            color: #9333ea;
+            text-decoration: none;
+        }
+
+        .prose a:hover {
+            color: #7c3aed;
+            text-decoration: underline;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-container {
+            background: white;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #111827;
+        }
+
+        .modal-body {
+            padding: 2rem;
         }
     </style>
 </head>
 <body>
     <!-- Hero Section -->
-    <section class="hero-section">
+    <section class="hero">
         <div class="container">
-            <h1 class="heading-level-1">🍳 What's Cooking?</h1>
-            <p class="body-text-1" style="margin-top: 1rem; opacity: 0.9;">
-                Discover what's brewing in the Appwrite kitchen! AI-powered analysis of the latest commits.
-            </p>
+            <div class="hero-content">
+                <div class="hero-icon">
+                        <span style="font-size: 2rem;">👨‍🍳</span>
+                    <h1>What's Cooking?</h1>
+                </div>
+                <p>Discover what's brewing in the Appwrite kitchen! AI-powered analysis of the latest commits with real-time insights.</p>
+                <div class="hero-badges">
+                    <div class="badge">
+                        <span>✨</span>
+                        AI-Powered
+                    </div>
+                    <div class="badge">
+                        <span>📈</span>
+                        Real-time Updates
+                    </div>
+                </div>
+                <button id="learnMoreBtn" class="btn btn-primary" style="margin-top: 1.5rem;">
+                    <span>🔍</span>
+                    Learn How It Works
+                </button>
+            </div>
         </div>
     </section>
 
-    <!-- Main Content -->
-    <main class="container" style="padding: 2rem 0;">
-        <!-- How It Works Section -->
-        <div style="background: white; border-radius: 12px; padding: 2rem; margin: 1.5rem 0; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); border: 1px solid #f0f0f0;">
-            <div style="text-align: center; margin-bottom: 2rem;">
-                <h3 style="color: #333; margin: 0 0 0.5rem 0; font-size: 1.4rem;">How It Works</h3>
-                <p style="color: #666; margin: 0; font-size: 0.95rem;">Automated analysis of Appwrite's latest commits every 24 hours</p>
-                <div style="margin-top: 1rem;">
-                    <a href="https://github.com/WhineyMonkey10/WhatsCooking" target="_blank" style="color: #fd366e; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.3rem;">
-                        <span>⭐</span> View Source Code
+    <!-- Modal for How It Works -->
+    <div id="howItWorksModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="card-title large" style="margin: 0;">How It Works</h2>
+                <button class="modal-close" id="closeModalBtn">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: #6b7280; margin-top: 0.5rem; margin-bottom: 1.5rem;">Automated analysis of Appwrite's latest commits every 24 hours</p>
+                <div style="margin-bottom: 1.5rem;">
+                    <a href="https://github.com/WhineyMonkey10/WhatsCooking" target="_blank" style="color: #9333ea; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <span>⭐</span>
+                        View Source Code
                     </a>
                 </div>
-            </div>
-            
-            <div style="display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;">
-                <div style="text-align: center; flex: 1; min-width: 150px; max-width: 200px;">
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #ff6b6b, #ff8787); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; font-size: 1.5rem;">🕐</div>
-                    <h4 style="margin: 0 0 0.5rem 0; color: #333; font-size: 1rem;">Daily Schedule</h4>
-                    <p style="margin: 0; color: #666; font-size: 0.85rem; line-height: 1.4;">Runs every 24 hours to check for new commits</p>
-                </div>
-                
-                <div style="text-align: center; flex: 1; min-width: 150px; max-width: 200px;">
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #4ecdc4, #44b3a8); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; font-size: 1.5rem;">🔍</div>
-                    <h4 style="margin: 0 0 0.5rem 0; color: #333; font-size: 1rem;">Smart Analysis</h4>
-                    <p style="margin: 0; color: #666; font-size: 0.85rem; line-height: 1.4;">Examines the 5 most recent commits for changes</p>
-                </div>
-                
-                <div style="text-align: center; flex: 1; min-width: 150px; max-width: 200px;">
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #a8e6cf, #88d8a3); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; font-size: 1.5rem;">🤖</div>
-                    <h4 style="margin: 0 0 0.5rem 0; color: #333; font-size: 1rem;">AI Detection</h4>
-                    <p style="margin: 0; color: #666; font-size: 0.85rem; line-height: 1.4;">Uses AI to identify potential new features</p>
-                </div>
-                
-                <div style="text-align: center; flex: 1; min-width: 150px; max-width: 200px;">
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #ffd93d, #ffcd3c); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; font-size: 1.5rem;">📊</div>
-                    <h4 style="margin: 0 0 0.5rem 0; color: #333; font-size: 1rem;">Live Results</h4>
-                    <p style="margin: 0; color: #666; font-size: 0.85rem; line-height: 1.4;">Updates automatically with fresh insights</p>
+                <div class="how-it-works-grid">
+                    <div class="step-card">
+                        <div class="step-icon blue">
+                            <span style="font-size: 1.5rem; color: white;">🕐</span>
+                        </div>
+                        <h3 class="step-title">Daily Schedule</h3>
+                        <p class="step-description">Runs every 24 hours to check for new commits</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-icon green">
+                            <span style="font-size: 1.5rem; color: white;">🔍</span>
+                        </div>
+                        <h3 class="step-title">Smart Analysis</h3>
+                        <p class="step-description">Examines the 5 most recent commits for changes</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-icon purple">
+                            <span style="font-size: 1.5rem; color: white;">🤖</span>
+                        </div>
+                        <h3 class="step-title">AI Detection</h3>
+                        <p class="step-description">Uses AI to identify potential new features</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-icon orange">
+                            <span style="font-size: 1.5rem; color: white;">📊</span>
+                        </div>
+                        <h3 class="step-title">Live Results</h3>
+                        <p class="step-description">Updates automatically with fresh insights</p>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Analysis Results -->
-        <div id="analysisContainer">
-            <!-- Loading State -->
-            <div id="loadingState">
-                <div class="analysis-card">
-                    <div class="feature-badge">🔍 Analyzing Latest Commits</div>
-                    <div class="loading-skeleton"></div>
-                    <p class="body-text-2" style="text-align: center; margin-top: 1rem;">
-                        Fetching and analyzing the latest Appwrite commits...
-                    </p>
+    <div class="container" style="padding: 3rem 0;">
+        <!-- Version Selector -->
+        <div class="card">
+            <div class="form-group">
+                <label for="versionSelector" style="font-weight: 500; color: #374151;">Select Appwrite Version:</label>
+                <select id="versionSelector" class="select" onchange="loadAnalysis(this.value)">
+                    <option value="1.8.x">Version 1.8.x</option>
+                    <option value="1.7.x">Version 1.7.x</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="card">
+            <div class="card-header">
+                <div class="loading-container">
+                    <div class="spinner"></div>
+                    <h3 style="color: #9333ea; margin: 0;">Analyzing Latest Commits</h3>
+                </div>
+            </div>
+            <div class="skeleton skeleton-line" style="width: 100%;"></div>
+            <div class="skeleton skeleton-line" style="width: 75%;"></div>
+            <div class="skeleton skeleton-block"></div>
+            <p style="text-align: center; margin-top: 1rem; color: #6b7280;">
+                Fetching and analyzing the latest Appwrite commits...
+            </p>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorState" class="alert error" style="display: none;">
+            <span>⚠️</span>
+            <div>
+                <strong>Analysis Failed</strong>
+                <p style="margin: 0.25rem 0 0 0;">Unable to fetch the latest analysis. Please try refreshing the page.</p>
+                <button onclick="loadAnalysis()" class="btn btn-secondary" style="margin-top: 0.5rem;">
+                    <span>🔄</span>
+                    Retry Analysis
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Container -->
+        <div id="resultsContainer" style="display: none;">
+            <!-- New Features Analysis -->
+            <div class="card">
+                <div class="analysis-header">
+                    <div class="analysis-title">
+                        <div class="analysis-icon purple">
+                            <span style="color: white;">✨</span>
+                        </div>
+                        <h2 class="card-title">Feature Detection Analysis</h2>
+                    </div>
+                    <div class="analysis-badges">
+                        <div id="versionBadge" class="status-badge version">Version 1.8.x</div>
+                        <div id="featureBadge" class="status-badge success">✓ New Feature Detected</div>
+                    </div>
+                </div>
+                <div id="newFeaturesContent" class="prose"></div>
+            </div>
+
+            <!-- Commit Summary -->
+            <div class="card">
+                <div class="analysis-header">
+                    <div class="analysis-title">
+                        <div class="analysis-icon blue">
+                            <span style="color: white;">📊</span>
+                        </div>
+                        <h2 class="card-title">Recent Activity Overview</h2>
+                    </div>
+                </div>
+                <div id="summaryContent" class="prose"></div>
+            </div>
+
+            <!-- Last Updated -->
+            <div style="text-center; color: #6b7280; margin: 2rem 0;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <span>📅</span>
+                    <span id="lastUpdated">Last updated: --</span>
                 </div>
             </div>
 
-            <!-- Results will be populated here -->
-            <div id="resultsContainer" style="display: none;">
-                <!-- New Features Analysis -->
-                <div class="analysis-card">
-                    <div class="feature-badge">🚀 Potential New Features</div>
-                    <h2 class="heading-level-2" style="margin-bottom: 1rem;">Feature Detection Analysis</h2>
-                    <div id="newFeaturesContent" class="body-text-1"></div>
+            <!-- Analysis History -->
+            <div class="card">
+                <div class="analysis-header">
+                    <div class="analysis-title">
+                        <div class="analysis-icon orange">
+                            <span style="color: white;">🕐</span>
+                        </div>
+                        <h2 class="card-title">Analysis History</h2>
+                    </div>
                 </div>
-
-                <!-- Commit Summary -->
-                <div class="analysis-card">
-                    <div class="feature-badge">📋 Commit Summary</div>
-                    <h2 class="heading-level-2" style="margin-bottom: 1rem;">Recent Activity Overview</h2>
-                    <div id="summaryContent" class="body-text-1"></div>
-                </div>
-
-                <!-- Last Updated -->
-                <div class="commit-meta" style="text-align: center; margin-top: 2rem;">
-                    <span id="lastUpdated"></span>
-                </div>
-            </div>
-
-            <!-- Error State -->
-            <div id="errorState" style="display: none;">
-                <div class="analysis-card" style="border-left: 4px solid #fd366e;">
-                    <h3 class="heading-level-3" style="color: #fd366e;">⚠️ Analysis Failed</h3>
-                    <p class="body-text-2">
-                        Unable to fetch the latest analysis. Please try refreshing the page.
-                    </p>
-                    <button onclick="loadAnalysis()" class="button is-secondary" style="margin-top: 1rem;">
-                        <span class="icon-refresh"></span>
-                        Retry Analysis
-                    </button>
+                <div id="historyContainer">
+                    <div class="skeleton skeleton-block"></div>
                 </div>
             </div>
         </div>
 
         <!-- Support Section -->
-        <div style="text-align: center; margin-top: 3rem; padding: 1rem; border-top: 1px solid #e0e0e0;">
-            <p class="body-text-2" style="color: #888; font-size: 0.85rem; margin-bottom: 0.5rem;">
+        <div class="support-section">
+            <p style="color: #6b7280; margin-bottom: 1rem;">
                 Enjoying this tool? 
-                <a href="https://buymeacoffee.com/whmonkey" target="_blank" style="color: #fd366e; text-decoration: none; font-weight: 500;">
-                    ☕ Buy me a coffee
+                <a href="https://buymeacoffee.com/whmonkey" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <span>☕</span>
+                    Buy me a coffee
                 </a>
             </p>
         </div>
-    </main>
+    </div>
 
     <!-- Footer -->
-    <footer style="background: #f8f9fa; padding: 2rem 0; margin-top: 4rem; text-align: center;">
+    <footer class="footer">
         <div class="container">
-            <p class="body-text-2" style="color: #666;">
-                Made with ❤️ using Appwrite Pink • Data from 
-                <a href="https://github.com/appwrite/appwrite" target="_blank" style="color: #fd366e;">Appwrite GitHub</a>
+            <p style="color: #6b7280;">
+                Made with ❤️ using Appwrite • Data from 
+                <a href="https://github.com/appwrite/appwrite" target="_blank" style="color: #9333ea; text-decoration: none;">
+                    Appwrite GitHub
+                </a>
             </p>
         </div>
     </footer>
 
-    <!-- Appwrite Web SDK -->
-    <script src="https://unpkg.com/appwrite@13.0.1/dist/iife/sdk.js"></script>
-    
     <script>
         // Appwrite configuration
         const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
@@ -213,37 +780,47 @@
         client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
         const databases = new Databases(client);
 
+        let currentVersion = '1.8.x';
+        let analysesCache = { '1.7.x': [], '1.8.x': [] };
+
         // Load analysis data
-        async function loadAnalysis() {
+        async function loadAnalysis(version = null) {
+            if (version) {
+                currentVersion = version;
+            }
+
             const loadingState = document.getElementById('loadingState');
             const resultsContainer = document.getElementById('resultsContainer');
             const errorState = document.getElementById('errorState');
+            const versionSelector = document.getElementById('versionSelector');
 
-            // Show loading state
+            if (versionSelector) {
+                versionSelector.value = currentVersion;
+            }
+
             loadingState.style.display = 'block';
             resultsContainer.style.display = 'none';
             errorState.style.display = 'none';
 
             try {
-                console.log('Fetching documents from Appwrite...');
-                // Fetch the latest analysis document using queries
+                console.log(`Fetching documents for version ${currentVersion}...`);
+                
                 const response = await databases.listDocuments(
                     DATABASE_ID,
                     COLLECTION_ID,
                     [
+                        Query.equal('trackedVersion', currentVersion),
                         Query.orderDesc('$createdAt'),
                         Query.limit(1)
                     ]
                 );
 
-                console.log('Appwrite response:', response);
-
                 if (response.documents.length > 0) {
                     const latestAnalysis = response.documents[0];
-                    console.log('Latest analysis:', latestAnalysis);
                     displayResults(latestAnalysis);
+                    loadAnalysisHistory();
                 } else {
-                    throw new Error('No analysis data found');
+                    throw new Error(`No analysis data found for version ${currentVersion}`);
                 }
             } catch (error) {
                 console.error('Error loading analysis:', error);
@@ -251,97 +828,189 @@
             }
         }
 
+        // Load historical analysis data
+        async function loadAnalysisHistory() {
+            try {
+                const response = await databases.listDocuments(
+                    DATABASE_ID,
+                    COLLECTION_ID,
+                    [
+                        Query.equal('trackedVersion', currentVersion),
+                        Query.orderDesc('$createdAt'),
+                        Query.limit(10)
+                    ]
+                );
+
+                if (response.documents.length > 0) {
+                    displayAnalysisHistory(response.documents.slice(1));
+                } else {
+                    document.getElementById('historyContainer').innerHTML = 
+                        '<div class="history-item"><p>No historical data available for this version.</p></div>';
+                }
+            } catch (error) {
+                console.error('Error loading analysis history:', error);
+                document.getElementById('historyContainer').innerHTML = 
+                    '<div class="history-item"><p>Failed to load analysis history.</p></div>';
+            }
+        }
+
+        // Display historical analysis data
+        function displayAnalysisHistory(analyses) {
+            const historyContainer = document.getElementById('historyContainer');
+            
+            if (analyses.length === 0) {
+                historyContainer.innerHTML = '<div class="history-item"><p>No previous analysis history available yet.</p></div>';
+                return;
+            }
+
+            let historyHTML = '';
+            analyses.forEach((analysis, index) => {
+                const date = new Date(analysis.$createdAt).toLocaleString();
+                const hasNewFeature = analysis.newFeatureFlag;
+                const itemClass = hasNewFeature ? 'has-feature' : 'no-feature';
+                const badgeClass = hasNewFeature ? 'success' : 'neutral';
+                const badgeText = hasNewFeature ? '✓ New Feature' : '✗ No Features';
+
+                historyHTML += `
+                    <div class="history-item ${itemClass}">
+                        <div class="history-header">
+                            <div class="history-date">
+                                <span>📅</span>
+                                <span>${date}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div class="status-badge ${badgeClass}">${badgeText}</div>
+                                <button class="btn btn-secondary" onclick="toggleHistory('${analysis.$id}')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                                    <span id="toggle-${analysis.$id}">Show Details</span>
+                                    <span id="chevron-${analysis.$id}">▼</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="content-${analysis.$id}" class="history-content">
+                            <div class="prose">${formatText(analysis.newFeaturesAnalysis)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            historyContainer.innerHTML = historyHTML;
+        }
+
+        // Toggle history item expansion
+        function toggleHistory(id) {
+            const content = document.getElementById(`content-${id}`);
+            const toggle = document.getElementById(`toggle-${id}`);
+            const chevron = document.getElementById(`chevron-${id}`);
+
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                toggle.textContent = 'Show Details';
+                chevron.textContent = '▼';
+            } else {
+                content.classList.add('expanded');
+                toggle.textContent = 'Hide Details';
+                chevron.textContent = '▲';
+            }
+        }
+
+        // Format text content
+        function formatText(text) {
+            if (!text) return 'No data available';
+
+            return text
+                .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/^\* (.*$)/gm, '<li>$1</li>')
+                .replace(/^- (.*$)/gm, '<li>$1</li>')
+                .replace(/\[([^\]]+)\]$$([^)]+)$$/g, '<a href="$2" target="_blank">$1</a>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>')
+                .replace(/(<li>.*?<\/li>)(\s*<li>.*?<\/li>)*/g, '<ul>$&</ul>')
+                .replace(/^(?!<[h1-6ul])/gm, '<p>')
+                .replace(/(?<!<\/[h1-6ul]>)$/gm, '</p>');
+        }
+
+        // Display results
         function displayResults(data) {
             const loadingState = document.getElementById('loadingState');
             const resultsContainer = document.getElementById('resultsContainer');
             const newFeaturesContent = document.getElementById('newFeaturesContent');
             const summaryContent = document.getElementById('summaryContent');
             const lastUpdated = document.getElementById('lastUpdated');
+            const versionBadge = document.getElementById('versionBadge');
+            const featureBadge = document.getElementById('featureBadge');
 
-            // Hide loading, show results
             loadingState.style.display = 'none';
             resultsContainer.style.display = 'block';
 
-            // Populate content
             newFeaturesContent.innerHTML = formatText(data.newFeaturesAnalysis);
             summaryContent.innerHTML = formatText(data.summary);
+
+            versionBadge.textContent = `Version ${data.trackedVersion}`;
             
-            // Set last updated time
+            if (data.hasOwnProperty('newFeatureFlag')) {
+                featureBadge.className = `status-badge ${data.newFeatureFlag ? 'success' : 'neutral'}`;
+                featureBadge.textContent = data.newFeatureFlag ? '✓ New Feature Detected' : '✗ No New Features Found';
+            }
+
             const updateTime = new Date(data.$createdAt).toLocaleString();
             lastUpdated.textContent = `Last updated: ${updateTime}`;
         }
 
+        // Show error state
         function showError() {
             const loadingState = document.getElementById('loadingState');
             const errorState = document.getElementById('errorState');
             
             loadingState.style.display = 'none';
-            errorState.style.display = 'block';
+            errorState.style.display = 'flex';
         }
 
-        function formatText(text) {
-            if (!text) return 'No data available';
-            
-            // Convert markdown formatting to HTML
-            let html = text
-                // Headers
-                .replace(/^### (.*$)/gm, '<h3 class="heading-level-3" style="margin: 1.5rem 0 0.5rem 0;">$1</h3>')
-                .replace(/^## (.*$)/gm, '<h2 class="heading-level-2" style="margin: 1.5rem 0 0.5rem 0;">$1</h2>')
-                .replace(/^# (.*$)/gm, '<h1 class="heading-level-1" style="margin: 1.5rem 0 0.5rem 0;">$1</h1>')
-                
-                // Bold and italic
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                
-                // Code blocks (triple backticks)
-                .replace(/```([\s\S]*?)```/g, '<pre style="background: #f5f5f5; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0;"><code>$1</code></pre>')
-                
-                // Inline code
-                .replace(/`([^`]+)`/g, '<code style="background: #f0f0f0; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace;">$1</code>')
-                
-                // Unordered lists
-                .replace(/^\* (.*$)/gm, '<li>$1</li>')
-                .replace(/^- (.*$)/gm, '<li>$1</li>')
-                
-                // Ordered lists
-                .replace(/^\d+\. (.*$)/gm, '<li>$1</li>')
-                
-                // Links
-                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color: #fd366e; text-decoration: none;">$1</a>')
-                
-                // Blockquotes
-                .replace(/^> (.*$)/gm, '<blockquote style="border-left: 4px solid #fd366e; padding-left: 1rem; margin: 1rem 0; font-style: italic;">$1</blockquote>')
-                
-                // Line breaks and paragraphs
-                .replace(/\n\n/g, '</p><p class="body-text-1" style="margin: 1rem 0;">')
-                .replace(/\n/g, '<br>');
-            
-            // Wrap consecutive list items in ul/ol tags
-            html = html.replace(/(<li>.*?<\/li>)(\s*<li>.*?<\/li>)*/g, function(match) {
-                return '<ul style="margin: 1rem 0; padding-left: 1.5rem;">' + match + '</ul>';
-            });
-            
-            // Wrap in initial paragraph if it doesn't start with a block element
-            if (!html.match(/^<(h[1-6]|div|p|ul|ol|blockquote|pre)/)) {
-                html = '<p class="body-text-1" style="margin: 1rem 0;">' + html;
-            }
-            
-            // Close final paragraph if needed
-            if (!html.match(/<\/(h[1-6]|div|p|ul|ol|blockquote|pre)>$/)) {
-                html += '</p>';
-            }
-            
-            return html;
-        }
-
-        // Load analysis on page load
+        // Modal functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // Existing initialization
             console.log('DOM loaded, starting analysis...');
             loadAnalysis();
+            
+            // Modal controls
+            const modal = document.getElementById('howItWorksModal');
+            const openModalBtn = document.getElementById('learnMoreBtn');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            
+            openModalBtn.addEventListener('click', function() {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            });
+            
+            closeModalBtn.addEventListener('click', function() {
+                modal.classList.remove('active');
+                document.body.style.overflow = ''; // Enable scrolling
+            });
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Close modal with escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && modal.classList.contains('active')) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
         });
 
         // Auto-refresh every 5 minutes
-        setInterval(loadAnalysis, 5 * 60 * 1000);
+        setInterval(() => loadAnalysis(currentVersion), 5 * 60 * 1000);
     </script>
 </body>
 </html>

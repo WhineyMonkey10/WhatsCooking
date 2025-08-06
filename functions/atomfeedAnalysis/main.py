@@ -115,7 +115,7 @@ def main(context):
         
         #print(summary_response)
         
-        documentCreationRes = databases.create_document(
+        databases.create_document(
             database_id = '6890ded500064cf8b023',
             collection_id = '6890dee0000a5ecd829e',
             document_id = ID.unique(),
