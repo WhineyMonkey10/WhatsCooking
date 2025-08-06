@@ -539,33 +539,83 @@
             transition: transform 0.3s ease;
         }
 
-        .modal-overlay.active .modal-container {
-            transform: translateY(0);
+        /* Enhanced Mobile Responsiveness */
+        @media (max-width: 480px) {
+            .hero h1 { 
+                font-size: 1.75rem; 
+            }
+            .hero p { 
+                font-size: 0.9rem;
+                margin: 0.75rem auto 1.5rem; 
+            }
+            .hero-badges {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .card { 
+                padding: 1.25rem; 
+                margin: 1rem 0;
+            }
+            .btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            .form-group {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            .history-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .modal-body {
+                padding: 1.5rem;
+            }
+            .modal-header {
+                padding: 1rem 1.5rem;
+            }
+            .how-it-works-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
         }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid #e5e7eb;
+        /* Improved table styles for markdown content */
+        .prose table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            overflow-x: auto;
+            display: block;
         }
 
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
+        .prose thead {
+            background-color: #f9fafb;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .prose th, .prose td {
+            padding: 0.75rem;
+            text-align: left;
+            border: 1px solid #e5e7eb;
+        }
+
+        .prose th {
+            font-weight: 600;
+        }
+
+        .prose tr:nth-child(even) {
+            background-color: #f3f4f6;
+        }
+
+        /* Improved blockquote styling */
+        .prose blockquote {
+            border-left: 4px solid #9333ea;
+            padding-left: 1rem;
+            margin: 1rem 0;
             color: #6b7280;
-            transition: color 0.2s ease;
-        }
-
-        .modal-close:hover {
-            color: #111827;
-        }
-
-        .modal-body {
-            padding: 2rem;
+            font-style: italic;
         }
     </style>
 </head>
@@ -913,26 +963,80 @@
             }
         }
 
-        // Format text content
+        // Format text content with enhanced markdown support
         function formatText(text) {
             if (!text) return 'No data available';
 
+            // Process markdown tables
+            const processTable = (text) => {
+                let inTable = false;
+                let tableHtml = '<table><thead><tr>';
+                const lines = text.split('\n');
+                const result = [];
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
+                        if (!inTable) {
+                            inTable = true;
+                            // Header row
+                            const cells = line.split('|').slice(1, -1);
+                            cells.forEach(cell => {
+                                tableHtml += `<th>${cell.trim()}</th>`;
+                            });
+                            tableHtml += '</tr></thead><tbody>';
+                            // Skip the separator row
+                            i++;
+                        } else {
+                            // Data row
+                            tableHtml += '<tr>';
+                            const cells = line.split('|').slice(1, -1);
+                            cells.forEach(cell => {
+                                tableHtml += `<td>${cell.trim()}</td>`;
+                            });
+                            tableHtml += '</tr>';
+                        }
+                    } else {
+                        if (inTable) {
+                            inTable = false;
+                            tableHtml += '</tbody></table>';
+                            result.push(tableHtml);
+                            tableHtml = '<table><thead><tr>';
+                        }
+                        result.push(line);
+                    }
+                }
+
+                if (inTable) {
+                    tableHtml += '</tbody></table>';
+                    result.push(tableHtml);
+                }
+
+                return result.join('\n');
+            };
+
+            // Apply table processing first
+            text = processTable(text);
+
+            // Continue with other markdown formatting
             return text
                 .replace(/^### (.*$)/gm, '<h3>$1</h3>')
                 .replace(/^## (.*$)/gm, '<h2>$1</h2>')
                 .replace(/^# (.*$)/gm, '<h1>$1</h1>')
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/~~(.*?)~~/g, '<del>$1</del>') // Strikethrough
                 .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
                 .replace(/`([^`]+)`/g, '<code>$1</code>')
                 .replace(/^\* (.*$)/gm, '<li>$1</li>')
                 .replace(/^- (.*$)/gm, '<li>$1</li>')
-                .replace(/\[([^\]]+)\]$$([^)]+)$$/g, '<a href="$2" target="_blank">$1</a>')
+                .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>') // Blockquotes
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>') // Fix link formatting
                 .replace(/\n\n/g, '</p><p>')
                 .replace(/\n/g, '<br>')
                 .replace(/(<li>.*?<\/li>)(\s*<li>.*?<\/li>)*/g, '<ul>$&</ul>')
-                .replace(/^(?!<[h1-6ul])/gm, '<p>')
-                .replace(/(?<!<\/[h1-6ul]>)$/gm, '</p>');
+                .replace(/^(?!<[h1-6ultable])/gm, '<p>')
+                .replace(/(?<!<\/[h1-6ultable]>)$/gm, '</p>');
         }
 
         // Display results
