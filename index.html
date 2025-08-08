@@ -1512,7 +1512,7 @@
                                     await account.createMagicURLToken(ID.unique(),
                                     email,
                                     window.location.origin + '/delete.html');
-                                    showSubscriptionSuccess('A confirmation email has been sent to delete your account. Please check your inbox.');
+                                    showSubscriptionSuccess('A confirmation email has been sent to delete your account. Please check your inbox. Remember to check your spam folder!');
                                 } catch (err) {
                                     console.error('Error sending recovery email:', err);
                                     showSubscriptionError('Failed to send delete email. Please try again later.');
