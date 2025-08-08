@@ -166,10 +166,11 @@
         const APPWRITE_PROJECT_ID = '6890d2c90034c3369acd';
 
         // Initialize Appwrite
-        const { Client, Account, ID } = Appwrite;
+        const { Client, Account, ID, Functions } = Appwrite;
         const client = new Client();
         client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
         const account = new Account(client);
+        const functions = new Functions(client);
 
         // DOM elements
         const loadingStatus = document.getElementById('loadingStatus');
@@ -212,13 +213,18 @@
                 // First, try to create a session with the provided parameters
                 await account.updateMagicURLSession(userId, secret);
                 
-                // If session creation successful, delete the account
+                // If session creation successful, delete the account using cloud function
                 try {
+                    // Call the account deletion cloud function
+                    const execution = await functions.createExecution(
+                        '68965a750018504bab79'  // Cloud function ID
+                    );
 
-                    await account.delete();
-
-
-                    showSuccess();
+                    if (execution.status === 'completed') {
+                        showSuccess();
+                    } else {
+                        throw new Error('Function execution failed: ' + execution.statusText);
+                    }
                 } catch (deleteError) {
                     console.error('Error deleting account:', deleteError);
                     showError('Failed to delete account after authentication. Please try again later.');
