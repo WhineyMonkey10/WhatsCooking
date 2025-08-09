@@ -1103,7 +1103,7 @@
                         </div>
                     </div>
                     <div id="subscriptionSuccess" class="subscription-message success">
-                        <strong>Successfully subscribed! Check your email for a verification link to start receiving updates.</strong> You'll receive email notifications when we detect new features. You can always delete your account (and stop receiving emails) by entering your email again here and pressing 'Delete Account' which will send you a confirmation email. Remember to check your spam! You can also unsubscribe at any time by clicking the unsubscribe link in the email which will automatically delete your account.
+                        <strong>Successfully subscribed! Check your email for a verification link to start receiving updates.</strong> You'll receive email notifications when we detect new features. You can always delete your account (and stop receiving emails) by entering your email again here which will send you a confirmation email. Remember to check your spam! You can also unsubscribe at any time by clicking the unsubscribe link in the email which will automatically delete your account.
                     </div>
                     <div id="subscriptionError" class="subscription-message error">
                         <strong>Subscription failed.</strong> <span id="errorMessage">Please try again later.</span>
@@ -1488,7 +1488,7 @@
                     const randomPassword = Math.random().toString(36).slice(-10);
                     try {
                         await account.create('unique()', email, randomPassword, email.split('@')[0]);
-                        await account.createEmailSession(email, randomPassword);
+                        await account.createEmailPasswordSession(email, randomPassword);
                         await account.createVerification(window.location.origin + '/');
                         showSubscriptionSuccess();
                     } catch (error) {
@@ -1546,15 +1546,6 @@
                 submitButton.innerHTML = originalButtonContent;
                 
                 if (msg) subscriptionSuccess.innerHTML = `<strong>Success!</strong> ${msg}`;
-                
-                setTimeout(() => {
-                    subscriptionModal.classList.remove('active');
-                    document.body.style.overflow = '';
-                    setTimeout(() => {
-                        subscriptionForm.style.display = 'flex';
-                        subscriptionSuccess.style.display = 'none';
-                    }, 500);
-                }, 3000);
             }
 
             function showSubscriptionError(message) {
