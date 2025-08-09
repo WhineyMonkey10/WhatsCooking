@@ -9,8 +9,6 @@ import dotenv
 
 dotenv.load_dotenv()
 
-
-
 def main(context):
     client = Client()
     client.set_endpoint('https://fra.cloud.appwrite.io/v1')
