@@ -9,6 +9,7 @@ import dotenv
 from appwrite.client import Client
 from appwrite.services.databases import Databases
 from appwrite.id import ID
+from appwrite.services.functions import Functions
 from langchain.chat_models import init_chat_model
 from typing_extensions import Annotated, TypedDict
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -52,6 +53,7 @@ def main(context):
     client.set_key(context.req.headers.get('x-appwrite-key'))
     
     databases = Databases(client)
+    functions = Functions(client)
     
     """
     Expected request body: (for now its just hardcoded as appwrite doesn't allow cronjobs with custom bodies!)
@@ -65,7 +67,7 @@ def main(context):
     """
     #tracked_versions = context.req.body.get('trackedVersions', [])
     tracked_versions = ["1.7.x", "1.8.x"]
-
+    newFeatures = []
     for versionToTrack in tracked_versions:
         feed = feedparser.parse(f"https://github.com/appwrite/appwrite/commits/{versionToTrack}.atom")
         for entry in feed.entries[:5]:
@@ -98,6 +100,7 @@ def main(context):
             SystemMessage("You are a helpful assistant which is given the past 10 commits and new lines of the Appwrite GitHub respository. THe Appwrite team sometimes adds new features in the code but prevent users from using them by using feature flags. Your job is to look at these commits and if you recognise that a new potential feature has been added (something that isn't yet in Appwrite), you must summarise the changes which made you notice this and give your best guess as to what it could be. Your response will be shown on a website, so then don't say stuff like 'Ask me for more info if you want', etc."),
             HumanMessage(f"Here is the data for the previous 10 commits of the Appwrite Github repo: {data}")
         ])
+        newFeatures.append(resStructered)
         
         #print(resStructered)
 
@@ -127,6 +130,23 @@ def main(context):
                 },
 
             )
+        
+    functions.create_execution(
+        "6897d16d000a3bbd22fb",
+        f"""
+        Here are possible new features for Appwrite 1.8.x:
+        
+        {newFeatures[1]}
+        
+        And for Appwrite 1.7.x:
+        
+        {newFeatures[0]}
+        
+        Check out past updates and see today's summaries <a href="https://whatscooking.appwrite.network/">here!</a>.
+        
+        """
+    )
+    
     
     return context.res.empty()
     #print(documentCreationRes)
