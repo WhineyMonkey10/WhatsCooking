@@ -143,8 +143,8 @@ def main(context):
         {newFeatures[0]}
         
         Check out past updates and see today's summaries <a href="https://whatscooking.appwrite.network/">here!</a>.
-        
-        """
+        """,
+        xasync=True
     )
     
     
