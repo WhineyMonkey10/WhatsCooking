@@ -22,7 +22,7 @@ def main(context):
     
     for subscriber in subscribers:
         # 2: get a unique unssubsribe token for each
-        token = subscriber.get('accountDeletionVerificationCode')
+        token = subscriber.accountDeletionVerificationCode
 
         messaging.create_email(
             ID.unique(),
