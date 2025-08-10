@@ -20,8 +20,8 @@ def main(context):
     # 1: identifiy the list of people.
     subscribers = databases.list_documents("6890ded500064cf8b023", "6890dee0000a5ecd829e")
     
-    for subscriber in subscribers:
-        subscriber = object(subscriber)
+    for subscriber in subscribers['documents']:
+
         # 2: get a unique unssubsribe token for each
         token = subscriber.accountDeletionVerificationCode
 
