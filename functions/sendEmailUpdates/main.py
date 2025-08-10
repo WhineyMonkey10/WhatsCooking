@@ -23,7 +23,7 @@ def main(context):
     for subscriber in subscribers['documents']:
 
         # 2: get a unique unssubsribe token for each
-        token = subscriber.accountDeletionVerificationCode
+        token = subscriber['accountDeletionVerificationCode']
 
         messaging.create_email(
             ID.unique(),
@@ -65,7 +65,7 @@ def main(context):
             </body>
             </html>
             """,
-            users=[subscriber.get('$id')]
+            users=[subscriber['$id']]
         )
         
         return context.res.empty()
