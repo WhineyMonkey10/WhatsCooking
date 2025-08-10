@@ -133,17 +133,10 @@ def main(context):
         
     functions.create_execution(
         "6897d16d000a3bbd22fb",
-        f"""
-        Here are possible new features for Appwrite 1.8.x:
-        
-        {newFeatures[1]}
-        
-        And for Appwrite 1.7.x:
-        
-        {newFeatures[0]}
-        
-        Check out past updates and see today's summaries <a href="https://whatscooking.appwrite.network/">here!</a>.
-        """,
+                {
+            "1.8.x": newFeatures[1],
+            "1.7.x": newFeatures[0]
+        },
         xasync=True
     )
     
