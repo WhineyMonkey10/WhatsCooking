@@ -18,7 +18,7 @@ def main(context):
     messaging = Messaging(client)
 
     # 1: identifiy the list of people.
-    subscribers = databases.list_documents("6890ded500064cf8b023", "6890dee0000a5ecd829e")
+    subscribers = databases.list_documents("6890ded500064cf8b023", "689791b100072ce22e05")
     
     for subscriber in subscribers['documents']:
 
