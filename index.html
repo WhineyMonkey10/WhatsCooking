@@ -1377,10 +1377,37 @@
             // Existing initialization
             console.log('DOM loaded, starting analysis...');
             
-            // Check for verification parameters in URL
+            // Check for URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             const userId = urlParams.get('userId');
             const secret = urlParams.get('secret');
+            const unsubscribeToken = urlParams.get('unsubscribeToken');
+            
+            // Handle unsubscribe token if present
+            if (unsubscribeToken) {
+                const { Functions } = Appwrite;
+                const functions = new Functions(client);
+                
+                // Show a loading message
+                alert('Processing your unsubscribe request...');
+                
+                // Call the account deletion function with the token as the body
+                functions.createExecution(
+                    '68965a750018504bab79',
+                    unsubscribeToken
+                )
+                .then(response => {
+                    if (response.status === 'completed') {
+                        alert('You have been successfully unsubscribed and your account has been deleted.');
+                    } else {
+                        throw new Error('Function execution failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Unsubscribe error:', error);
+                    alert('Failed to process your unsubscribe request. Please try again later.');
+                });
+            }
             
             // If both parameters exist, complete the verification process
             if (userId && secret) {

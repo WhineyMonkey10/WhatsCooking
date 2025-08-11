@@ -11,13 +11,15 @@ def main(context):
     
     users = Users(client)
     databases = Databases(client)
-    
-    email = users.get(context.req.headers.get('x-appwrite-user-id')).get('email')
-
-    databases.delete_document("6890ded500064cf8b023", "6890dee0000a5ecd829e", databases.get_document("6890ded500064cf8b023", "6890dee0000a5ecd829e", queries=[Query.equal("$id", [context.req.headers.get('x-appwrite-user-id')])]))
+    userId = context.req.headers.get('x-appwrite-user-id')
+    if userId == None:
+        userId = databases.get_document("6890ded500064cf8b023", "689791b100072ce22e05", queries=[Query(Query.equal("accountDeletionVerificationCode", context.req.body))])
+            
+    #email = users.get(userId).get('email')
+    databases.delete_document("6890ded500064cf8b023", "689791b100072ce22e05", userId)
     
     users.delete(
-        user_id = context.req.headers.get('x-appwrite-user-id')
+        user_id = userId
     )
     
     
