@@ -14,14 +14,17 @@ def main(context):
     userId = context.req.headers.get('x-appwrite-user-id')
     if userId == None:
         userId = databases.get_document("6890ded500064cf8b023", "689791b100072ce22e05", queries=[Query(Query.equal("accountDeletionVerificationCode", context.req.body))])
-            
-    #email = users.get(userId).get('email')
-    databases.delete_document("6890ded500064cf8b023", "689791b100072ce22e05", userId)
     
     users.delete(
         user_id = userId
     )
-    
+        
+    #email = users.get(userId).get('email')
+    try:
+        databases.delete_document("6890ded500064cf8b023", "689791b100072ce22e05", userId)
+    except:
+        pass
+
     
     
     return context.res.empty()
