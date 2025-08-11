@@ -63,7 +63,7 @@ def main(context):
                 <div style="color: #4b5563;">
                     {databases.get_document("6890ded500064cf8b023", "6890dee0000a5ecd829e", queries=[
                                         Query.equal("trackedVersion", "1.8.x"),
-                                        Query.orderDesc("$createdAt"),
+                                        Query.order_desc("$createdAt"),
                                         Query.limit(1)
                     ])}                </div>
             </div>
@@ -74,7 +74,7 @@ def main(context):
                 <div style="color: #4b5563;">
                     {databases.get_document("6890ded500064cf8b023", "6890dee0000a5ecd829e", queries=[
                                         Query.equal("trackedVersion", "1.7.x"),
-                                        Query.orderDesc("$createdAt"),
+                                        Query.order_desc("$createdAt"),
                                         Query.limit(1)
                     ])}
                 </div>
