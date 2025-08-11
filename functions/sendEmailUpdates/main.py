@@ -65,7 +65,7 @@ def main(context):
                                         Query.equal("trackedVersion", "1.8.x"),
                                         Query.order_desc("$createdAt"),
                                         Query.limit(1)
-                    ])[0]['newFeaturesAnalysis']}                </div>
+                    ])['documents'][0]['newFeaturesAnalysis']}                </div>
             </div>
 
             <!-- 1.7.x Section -->
@@ -76,7 +76,7 @@ def main(context):
                                         Query.equal("trackedVersion", "1.7.x"),
                                         Query.order_desc("$createdAt"),
                                         Query.limit(1)
-                    ])[0]['newFeaturesAnalysis']}
+                    ])['documents'][0]['newFeaturesAnalysis']}
                 </div>
             </div>
         </div>
