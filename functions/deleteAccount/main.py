@@ -13,7 +13,7 @@ def main(context):
     databases = Databases(client)
     userId = context.req.headers.get('x-appwrite-user-id')
     if userId == None:
-        userId = databases.get_document("6890ded500064cf8b023", "689791b100072ce22e05", queries=[Query(Query.equal("accountDeletionVerificationCode", context.req.body))])
+        userId = databases.list_documents("6890ded500064cf8b023", "689791b100072ce22e05", queries=[Query(Query.equal("accountDeletionVerificationCode", context.req.body))])['documents'][0]
     
     users.delete(
         user_id = userId

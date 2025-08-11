@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>What's Cooking? - Appwrite Commit Analysis</title>
     <script src="https://unpkg.com/appwrite@16.0.2/dist/iife/sdk.js"></script>
     <style>
@@ -709,139 +709,180 @@
         }
 
         /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .hero {
-                padding: 3rem 0;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-
-            .hero-description {
-                font-size: 1rem;
-            }
-
+        @media (max-width: 992px) {
             .card-header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 1rem;
             }
-
-            .timeline-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.75rem;
+            
+            .badge-group {
+                margin-top: 0.5rem;
             }
+        }
 
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
             }
-
-            .footer-links {
-                justify-content: center;
+            
+            .hero {
+                padding: 2.5rem 0;
+            }
+            
+            .hero-title {
+                gap: 0.5rem;
+            }
+            
+            .hero-emoji {
+                font-size: 2rem;
+            }
+            
+            h1 {
+                font-size: 1.75rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .hero-description {
+                font-size: 1rem;
+                padding: 0 0.5rem;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .card-header {
+                padding: 1rem;
+            }
+            
+            .modal-container {
+                width: 95%;
+                max-width: 95%;
+                margin: 0 2.5%;
+            }
+            
+            .modal-body {
+                padding: 1rem;
+            }
+            
+            .timeline-item {
+                padding: 1rem;
             }
         }
 
         @media (max-width: 480px) {
-            .hero-buttons {
+            .version-selector {
                 flex-direction: column;
+                gap: 0.75rem;
+                align-items: stretch;
+                padding: 0.75rem;
+            }
+            
+            .version-label {
+                margin-right: 0;
+                text-align: center;
+            }
+            
+            .select-wrapper {
                 width: 100%;
             }
-
-            .hero-buttons .btn {
+            
+            .select {
                 width: 100%;
             }
-
+            
+            .btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.8rem;
+            }
+            
+            .timeline-header {
+                gap: 0.5rem;
+            }
+            
+            .timeline-header button {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.7rem;
+            }
+            
+            .subscription-form {
+                gap: 0.75rem;
+            }
+            
+            .form-control {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
+            }
+            
+            .subscription-message {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+            
+            .prose {
+                font-size: 0.95rem;
+            }
+            
+            .prose h1 { font-size: 1.25rem; }
+            .prose h2 { font-size: 1.1rem; }
+            .prose h3 { font-size: 1rem; }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            /* Styles for touch devices */
+            .btn, .modal-close, button {
+                min-height: 44px;
+                min-width: 44px;  /* Apple's recommended touch target size */
+            }
+            
+            .form-control {
+                min-height: 44px;
+            }
+            
+            .timeline-item {
+                margin-bottom: 1.25rem;
+            }
+            
+            .timeline-header button {
+                padding: 0.5rem 0.75rem;
+            }
+            
+            .select {
+                min-height: 44px;
+            }
+            
+            /* Add more space between touchable elements */
             .tag-container {
-                flex-direction: column;
-                align-items: center;
+                gap: 1rem;
+            }
+            
+            .hero-buttons {
+                gap: 1.25rem;
+            }
+            
+            .footer-links {
+                gap: 2rem;
             }
         }
-
-        /* Markdown/Prose styling */
-        .prose {
-            color: var(--text-medium);
-            line-height: 1.7;
-        }
-
-        .prose h1, .prose h2, .prose h3, .prose h4 {
-            color: var(--text-dark);
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .prose h1 { font-size: 1.5rem; }
-        .prose h2 { font-size: 1.25rem; }
-        .prose h3 { font-size: 1.125rem; }
-
-        .prose p {
-            margin-bottom: 1rem;
-        }
-
-        .prose ul, .prose ol {
-            margin-left: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .prose li {
-            margin-bottom: 0.25rem;
-        }
-
-        .prose code {
-            background-color: var(--bg-light);
-            padding: 0.125rem 0.25rem;
-            border-radius: 0.25rem;
-            font-family: 'Courier New', monospace;
-            font-size: 0.875rem;
-        }
-
-        .prose pre {
-            background-color: var(--bg-light);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            margin: 1rem 0;
-        }
-
-        .prose a {
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        .prose a:hover {
-            text-decoration: underline;
-        }
-
-        .prose blockquote {
-            border-left: 4px solid var(--primary-color);
-            padding-left: 1rem;
-            margin: 1rem 0;
-            font-style: italic;
-        }
-
-        .prose table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            overflow-x: auto;
-            display: block;
-        }
-
-        .prose thead {
-            background-color: var(--bg-light);
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .prose th, .prose td {
-            padding: 0.75rem;
-            text-align: left;
-            border: 1px solid var(--border-color);
-        }
-
-        .prose tr:nth-child(even) {
-            background-color: var(--bg-light);
+        
+        /* Fix for iOS Safari bottom toolbar */
+        @supports (-webkit-touch-callout: none) {
+            .page-wrapper {
+                min-height: -webkit-fill-available;
+            }
+            
+            .modal-overlay {
+                padding-bottom: 4rem;
+            }
         }
     </style>
 </head>
