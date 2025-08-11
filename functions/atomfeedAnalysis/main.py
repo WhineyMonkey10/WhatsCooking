@@ -133,10 +133,6 @@ def main(context):
         
     functions.create_execution(
         "6897d16d000a3bbd22fb",
-                {
-            "1.8.x": newFeatures[1],
-            "1.7.x": newFeatures[0]
-        },
         xasync=True
     )
     

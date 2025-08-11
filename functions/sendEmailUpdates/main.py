@@ -2,6 +2,7 @@ from appwrite.client import Client
 from appwrite.services.databases import Databases
 from appwrite.services.messaging import Messaging
 from appwrite.id import ID
+from appwrite.query import Query
 
 
 # note: due to me not figuring out a way to send all emails all in one batch with a custom footer for each email
@@ -60,15 +61,22 @@ def main(context):
             <div style="margin: 1.25rem 0; padding: 1rem; background-color: white; border-radius: 0.5rem; border: 1px solid #e5e7eb;">
                 <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #1f2937;">Appwrite 1.8.x</h3>
                 <div style="color: #4b5563;">
-                    {context.req.body["1.8.x"]}
-                </div>
+                    {databases.get_document("6890ded500064cf8b023", "6890dee0000a5ecd829e", queries=[
+                                        Query.equal("trackedVersion", "1.8.x"),
+                                        Query.orderDesc("$createdAt"),
+                                        Query.limit(1)
+                    ])}                </div>
             </div>
 
             <!-- 1.7.x Section -->
             <div style="margin: 1.25rem 0; padding: 1rem; background-color: white; border-radius: 0.5rem; border: 1px solid #e5e7eb;">
                 <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #1f2937;">Appwrite 1.7.x</h3>
                 <div style="color: #4b5563;">
-                    {context.req.body["1.7.x"]}
+                    {databases.get_document("6890ded500064cf8b023", "6890dee0000a5ecd829e", queries=[
+                                        Query.equal("trackedVersion", "1.7.x"),
+                                        Query.orderDesc("$createdAt"),
+                                        Query.limit(1)
+                    ])}
                 </div>
             </div>
         </div>
