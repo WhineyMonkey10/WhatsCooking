@@ -61,22 +61,22 @@ def main(context):
             <div style="margin: 1.25rem 0; padding: 1rem; background-color: white; border-radius: 0.5rem; border: 1px solid #e5e7eb;">
                 <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #1f2937;">Appwrite 1.8.x</h3>
                 <div style="color: #4b5563;">
-                    {databases.get_document("6890ded500064cf8b023", "6890dee0000a5ecd829e", queries=[
+                    {databases.list_documents("6890ded500064cf8b023", "6890dee0000a5ecd829e", queries=[
                                         Query.equal("trackedVersion", "1.8.x"),
                                         Query.order_desc("$createdAt"),
                                         Query.limit(1)
-                    ])}                </div>
+                    ])[0]['newFeaturesAnalysis']}                </div>
             </div>
 
             <!-- 1.7.x Section -->
             <div style="margin: 1.25rem 0; padding: 1rem; background-color: white; border-radius: 0.5rem; border: 1px solid #e5e7eb;">
                 <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #1f2937;">Appwrite 1.7.x</h3>
                 <div style="color: #4b5563;">
-                    {databases.get_document("6890ded500064cf8b023", "6890dee0000a5ecd829e", queries=[
+                    {databases.list_documents("6890ded500064cf8b023", "6890dee0000a5ecd829e", queries=[
                                         Query.equal("trackedVersion", "1.7.x"),
                                         Query.order_desc("$createdAt"),
                                         Query.limit(1)
-                    ])}
+                    ])[0]['newFeaturesAnalysis']}
                 </div>
             </div>
         </div>
