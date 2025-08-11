@@ -100,7 +100,7 @@ def main(context):
             SystemMessage("You are a helpful assistant which is given the past 10 commits and new lines of the Appwrite GitHub respository. THe Appwrite team sometimes adds new features in the code but prevent users from using them by using feature flags. Your job is to look at these commits and if you recognise that a new potential feature has been added (something that isn't yet in Appwrite), you must summarise the changes which made you notice this and give your best guess as to what it could be. Your response will be shown on a website, so then don't say stuff like 'Ask me for more info if you want', etc."),
             HumanMessage(f"Here is the data for the previous 10 commits of the Appwrite Github repo: {data}")
         ])
-        newFeatures.append(resStructered)
+        newFeatures.append(str(resStructered))
         
         #print(resStructered)
 
