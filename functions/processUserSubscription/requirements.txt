@@ -1,0 +1,3 @@
+appwrite
+pyjwt
+python-dotenv
