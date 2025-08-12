@@ -213,22 +213,43 @@
                 // First, try to create a session with the provided parameters
                 await account.updateMagicURLSession(userId, secret);
                 
-                // If session creation successful, delete the account using cloud function
-                try {
-                    // Call the account deletion cloud function
-                    const execution = await functions.createExecution(
-                        '68965a750018504bab79'  // Cloud function ID
-                    );
+                // If session creation successful, delete the account using cloud function with retry logic
+                const executeAccountDeletion = async (retryCount = 0, maxRetries = 5) => {
+                    try {
+                        // Call the account deletion cloud function
+                        const execution = await functions.createExecution(
+                            '68965a750018504bab79'  // Cloud function ID
+                        );
 
-                    if (execution.status === 'completed') {
-                        showSuccess();
-                    } else {
-                        throw new Error('Function execution failed: ' + execution.statusText);
+                        if (execution.status === 'completed') {
+                            showSuccess();
+                        } else {
+                            throw new Error('Function execution failed: ' + execution.statusText);
+                        }
+                    } catch (deleteError) {
+                        console.error(`Error deleting account (attempt ${retryCount + 1}):`, deleteError);
+                        
+                        // If we haven't reached max retries, try again
+                        if (retryCount < maxRetries) {
+                            // Calculate exponential backoff delay (1s, 2s, 4s, 8s, 16s)
+                            const delay = Math.pow(2, retryCount) * 1000;
+                            
+                            // Update loading message to show retry status
+                            const loadingMessage = document.querySelector('#loadingStatus p');
+                            loadingMessage.textContent = `Processing your account deletion request... (Retry ${retryCount + 1}/${maxRetries})`;
+                            
+                            // Try again after delay
+                            setTimeout(() => executeAccountDeletion(retryCount + 1, maxRetries), delay);
+                        } else {
+                            // All retries failed
+                            showError('Failed to delete account after multiple attempts. Please try again later or contact support.');
+                        }
                     }
-                } catch (deleteError) {
-                    console.error('Error deleting account:', deleteError);
-                    showError('Failed to delete account after authentication. Please try again later.');
-                }
+                };
+                
+                // Start the deletion process with retry
+                executeAccountDeletion();
+                
             } catch (sessionError) {
                 console.error('Error creating session:', sessionError);
                 showError('Authentication failed. The link may have expired or already been used.');
