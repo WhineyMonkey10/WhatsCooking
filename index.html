@@ -2,11 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>What's Cooking? - Appwrite Commit Analysis</title>
-    <script defer src="https://cloud.umami.is/script.js" data-website-id="84041bf7-aed6-4ce5-8fb9-770429d66dcd"></script>
-    <script src="https://unpkg.com/appwrite@13.0.1/dist/iife/sdk.js"></script>
+    <script src="https://unpkg.com/appwrite@16.0.2/dist/iife/sdk.js"></script>
     <style>
+        :root {
+            --primary-color: #9333ea;
+            --primary-light: #a855f7;
+            --primary-dark: #7e22ce;
+            --accent-color: #ec4899;
+            --text-dark: #1f2937;
+            --text-medium: #4b5563;
+            --text-light: #9ca3af;
+            --bg-light: #f9fafb;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --transition: all 0.2s ease;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -16,247 +35,330 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
-            color: #374151;
-            background: linear-gradient(135deg, #faf5ff 0%, #ffffff 50%, #fef7f7 100%);
-            min-height: 100vh;
+            color: var(--text-dark);
+            background-color: #f5f7fa;
         }
 
         .container {
+            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 1rem;
+            padding: 0 1.5rem;
         }
 
-        /* Hero Section */
+        /* Layout */
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        /* Header/Hero Section */
         .hero {
-            background: linear-gradient(135deg, #9333ea 0%, #ec4899 50%, #ef4444 100%);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 50%, var(--accent-color) 100%);
             color: white;
-            padding: 5rem 0;
-            text-align: center;
+            padding: 4rem 0;
             position: relative;
-            overflow: hidden;
         }
 
         .hero::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.1);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.1;
         }
 
         .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
             position: relative;
             z-index: 1;
         }
 
-        .hero-icon {
-            display: inline-flex;
+        .hero-title {
+            display: flex;
             align-items: center;
-            gap: 1rem;
+            justify-content: center;
+            gap: 0.75rem;
             margin-bottom: 1.5rem;
         }
 
-        .hero-icon-bg {
-            padding: 0.75rem;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            backdrop-filter: blur(10px);
+        .hero-emoji {
+            font-size: 2.5rem;
+            display: inline-block;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
         }
 
-        .hero h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .hero p {
+        .hero-description {
             font-size: 1.25rem;
             opacity: 0.9;
-            max-width: 600px;
-            margin: 1rem auto 2rem;
+            margin-bottom: 2rem;
         }
 
-        .hero-badges {
+        .hero-buttons {
             display: flex;
-            justify-content: center;
             gap: 1rem;
+            justify-content: center;
             flex-wrap: wrap;
         }
 
-        .badge {
+        .tag-container {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            background-color: rgba(255, 255, 255, 0.15);
             border-radius: 9999px;
             font-size: 0.875rem;
             font-weight: 500;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         /* Cards */
         .card {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 1rem;
-            padding: 2rem;
-            margin: 1.5rem 0;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            background-color: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
         }
 
         .card:hover {
+            box-shadow: var(--shadow-lg);
             transform: translateY(-2px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
         .card-header {
-            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .card-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
+        .card-title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        .card-title.large {
-            font-size: 2rem;
-            background: linear-gradient(135deg, #9333ea, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* How It Works Grid */
-        .how-it-works-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .step-card {
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        .step-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .step-icon {
-            width: 4rem;
-            height: 4rem;
-            margin: 0 auto 1rem;
-            border-radius: 1rem;
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.3s ease;
+            color: white;
+            font-size: 1.25rem;
         }
 
-        .step-card:hover .step-icon {
-            transform: scale(1.1);
+        .card-icon.primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
         }
 
-        .step-icon.blue { background: linear-gradient(135deg, #3b82f6, #06b6d4); }
-        .step-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
-        .step-icon.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-        .step-icon.orange { background: linear-gradient(135deg, #f97316, #ea580c); }
+        .card-icon.info {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        }
 
-        .step-title {
+        .card-icon.warning {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Badge */
+        .badge-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
             font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
         }
 
-        .step-description {
-            font-size: 0.875rem;
-            color: #6b7280;
-            line-height: 1.5;
+        .badge.primary {
+            background-color: #ede9fe;
+            color: var(--primary-color);
+            border: 1px solid #ddd6fe;
+        }
+
+        .badge.success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .badge.neutral {
+            background-color: #f3f4f6;
+            color: #4b5563;
+            border: 1px solid #e5e7eb;
         }
 
         /* Form Elements */
         .form-group {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+        }
+
+        .select-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .select-wrapper::after {
+            content: '▼';
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            font-size: 0.75rem;
+            color: var(--text-medium);
         }
 
         .select {
-            padding: 0.75rem 1rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            background: white;
-            font-size: 0.875rem;
-            min-width: 160px;
+            appearance: none;
+            padding-right: 2.5rem;
+            background-color: white;
             cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .select:focus {
-            outline: none;
-            border-color: #9333ea;
-            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
         }
 
         /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
             padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.5rem;
+            font-size: 0.875rem;
             font-weight: 500;
+            text-align: center;
+            border: none;
+            border-radius: var(--radius-md);
             cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
+            transition: var(--transition);
+            line-height: 1;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #9333ea, #ec4899);
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             color: white;
+            box-shadow: 0 2px 4px rgba(147, 51, 234, 0.1);
         }
 
         .btn-primary:hover {
+            box-shadow: 0 4px 8px rgba(147, 51, 234, 0.2);
             transform: translateY(-1px);
-            box-shadow: 0 10px 20px rgba(147, 51, 234, 0.3);
         }
 
         .btn-secondary {
-            background: #f3f4f6;
-            color: #374151;
-            border: 1px solid #d1d5db;
+            background-color: white;
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
         }
 
         .btn-secondary:hover {
-            background: #e5e7eb;
+            background-color: var(--bg-light);
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 1.25rem;
         }
 
         /* Loading States */
         .loading-container {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            color: #9333ea;
-            font-weight: 500;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
 
         .spinner {
-            width: 1.5rem;
-            height: 1.5rem;
-            border: 2px solid #e5e7eb;
-            border-top: 2px solid #9333ea;
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(147, 51, 234, 0.2);
+            border-top-color: var(--primary-color);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
@@ -267,7 +369,7 @@
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
             background-size: 200% 100%;
             animation: loading 1.5s infinite;
-            border-radius: 0.5rem;
+            border-radius: var(--radius-md);
         }
 
         @keyframes loading {
@@ -277,7 +379,7 @@
 
         .skeleton-line {
             height: 1rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .skeleton-block {
@@ -286,226 +388,141 @@
         }
 
         /* Analysis Results */
-        .analysis-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .analysis-title {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .analysis-icon {
-            padding: 0.5rem;
-            border-radius: 0.5rem;
+        .version-selector {
+            margin-bottom: 2rem;
+            background-color: white;
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            box-shadow: var(--shadow-sm);
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .analysis-icon.purple { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
-        .analysis-icon.blue { background: linear-gradient(135deg, #3b82f6, #06b6d4); }
-        .analysis-icon.orange { background: linear-gradient(135deg, #f97316, #ea580c); }
-
-        .analysis-badges {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
+        .version-label {
             font-weight: 500;
+            margin-right: 1rem;
         }
 
-        .status-badge.version {
-            background: #ede9fe;
-            color: #7c3aed;
-            border: 1px solid #c4b5fd;
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
         }
 
-        .status-badge.success {
-            background: #dcfce7;
-            color: #166534;
+        @media (min-width: 992px) {
+            .results-grid {
+                grid-template-columns: 2fr 1fr;
+            }
         }
 
-        .status-badge.neutral {
-            background: #f3f4f6;
-            color: #374151;
-        }
-
-        /* History Section */
-        .history-item {
-            border: 1px solid #e5e7eb;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
+        .timeline-item {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
             margin-bottom: 1rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            background-color: white;
+            transition: var(--transition);
         }
 
-        .history-item:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transform: translateY(-1px);
+        .timeline-item:hover {
+            box-shadow: var(--shadow-md);
         }
 
-        .history-item.has-feature {
+        .timeline-item.feature {
             border-left: 4px solid #10b981;
         }
 
-        .history-item.no-feature {
-            border-left: 4px solid #6b7280;
+        .timeline-item.no-feature {
+            border-left: 4px solid var(--text-light);
         }
 
-        .history-header {
+        .timeline-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 1rem;
         }
 
-        .history-date {
+        .timeline-date {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             font-weight: 500;
-            color: #1f2937;
         }
 
-        .history-content {
+        .timeline-content {
             display: none;
             padding-top: 1rem;
-            border-top: 1px solid #f3f4f6;
+            border-top: 1px solid var(--border-color);
         }
 
-        .history-content.expanded {
+        .timeline-content.expanded {
             display: block;
+        }
+
+        .last-updated {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-medium);
+            font-size: 0.875rem;
         }
 
         /* Alert */
         .alert {
             display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            align-items: flex-start;
+            gap: 1rem;
             padding: 1rem;
-            border-radius: 0.5rem;
-            margin: 1rem 0;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
         }
 
         .alert.error {
-            background: #fef2f2;
+            background-color: #fee2e2;
             border: 1px solid #fecaca;
-            color: #991b1b;
+            color: #b91c1c;
         }
 
         /* Footer */
         .footer {
-            background: #f9fafb;
-            border-top: 1px solid #e5e7eb;
+            background-color: white;
+            border-top: 1px solid var(--border-color);
             padding: 2rem 0;
-            margin-top: 4rem;
-            text-align: center;
+            margin-top: 2rem;
         }
 
-        .support-section {
-            text-align: center;
-            margin-top: 3rem;
-            padding: 2rem 0;
-            border-top: 1px solid #e5e7eb;
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-        .support-section a {
-            color: #9333ea;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .support-section a:hover {
-            color: #7c3aed;
-        }
-
-        /* Icons (using Unicode symbols) */
-        .icon {
-            width: 1.25rem;
-            height: 1.25rem;
-            display: inline-block;
-            text-align: center;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2rem; }
-            .hero p { font-size: 1rem; }
-            .card { padding: 1.5rem; }
-            .analysis-header { flex-direction: column; align-items: flex-start; }
-            .how-it-works-grid { grid-template-columns: 1fr; }
-        }
-
-        /* Prose styling for content */
-        .prose {
-            line-height: 1.7;
-        }
-
-        .prose h1, .prose h2, .prose h3 {
-            color: #1f2937;
-            font-weight: 600;
-            margin: 1.5rem 0 0.75rem 0;
-        }
-
-        .prose h1 { font-size: 1.5rem; }
-        .prose h2 { font-size: 1.25rem; }
-        .prose h3 { font-size: 1.125rem; }
-
-        .prose p {
-            margin-bottom: 1rem;
-            color: #4b5563;
-        }
-
-        .prose ul {
-            list-style: disc;
-            margin-left: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .prose li {
-            margin-bottom: 0.25rem;
-        }
-
-        .prose code {
-            background: #f3f4f6;
-            padding: 0.125rem 0.25rem;
-            border-radius: 0.25rem;
-            font-family: 'Courier New', monospace;
+        .footer-text {
+            color: var(--text-medium);
             font-size: 0.875rem;
         }
 
-        .prose pre {
-            background: #f3f4f6;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            margin: 1rem 0;
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
         }
 
-        .prose a {
-            color: #9333ea;
+        .footer-link {
+            color: var(--primary-color);
             text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: var(--transition);
         }
 
-        .prose a:hover {
-            color: #7c3aed;
-            text-decoration: underline;
+        .footer-link:hover {
+            color: var(--primary-dark);
         }
 
-        /* Modal Styles */
+        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -513,6 +530,7 @@
             right: 0;
             bottom: 0;
             background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -520,6 +538,7 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 1rem;
         }
 
         .modal-overlay.active {
@@ -528,294 +547,690 @@
         }
 
         .modal-container {
-            background: white;
-            border-radius: 1rem;
-            width: 90%;
-            max-width: 800px;
+            background-color: white;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-lg);
             transform: translateY(20px);
             transition: transform 0.3s ease;
         }
 
-        /* Enhanced Mobile Responsiveness */
-        @media (max-width: 480px) {
-            .hero h1 { 
-                font-size: 1.75rem; 
-            }
-            .hero p { 
-                font-size: 0.9rem;
-                margin: 0.75rem auto 1.5rem; 
-            }
-            .hero-badges {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            .card { 
-                padding: 1.25rem; 
-                margin: 1rem 0;
-            }
-            .btn {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.9rem;
-            }
-            .form-group {
-                flex-direction: column;
-                padding: 1rem;
-            }
-            .history-header {
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: var(--transition);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .modal-close:hover {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* How it works */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            background-color: var(--bg-light);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .feature-icon.blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+        .feature-icon.green { background: linear-gradient(135deg, #10b981, #34d399); }
+        .feature-icon.purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+        .feature-icon.orange { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            font-size: 0.875rem;
+            color: var(--text-medium);
+        }
+
+        /* Subscription Form */
+        .subscription-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .subscription-message {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-top: 1.25rem;
+            display: none;
+        }
+
+        .subscription-message.success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .subscription-message.error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        /* Subscription loading spinner */
+        .subscription-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .subscription-spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #e5e7eb;
+            border-top: 2px solid #9333ea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Notification bell animation */
+        @keyframes bell-shake {
+            0% { transform: rotate(0); }
+            10% { transform: rotate(10deg); }
+            20% { transform: rotate(-10deg); }
+            30% { transform: rotate(6deg); }
+            40% { transform: rotate(-6deg); }
+            50% { transform: rotate(0); }
+            100% { transform: rotate(0); }
+        }
+
+        .bell-icon {
+            display: inline-block;
+            animation: bell-shake 2s ease infinite;
+            animation-delay: 2s;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .card-header {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .badge-group {
+                margin-top: 0.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .hero {
+                padding: 2.5rem 0;
+            }
+            
+            .hero-title {
                 gap: 0.5rem;
             }
+            
+            .hero-emoji {
+                font-size: 2rem;
+            }
+            
+            h1 {
+                font-size: 1.75rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .hero-description {
+                font-size: 1rem;
+                padding: 0 0.5rem;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .card-header {
+                padding: 1rem;
+            }
+            
+            .modal-container {
+                width: 95%;
+                max-width: 95%;
+                margin: 0 2.5%;
+            }
+            
             .modal-body {
-                padding: 1.5rem;
+                padding: 1rem;
             }
-            .modal-header {
-                padding: 1rem 1.5rem;
-            }
-            .how-it-works-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
+            
+            .timeline-item {
+                padding: 1rem;
             }
         }
 
-        /* Improved table styles for markdown content */
-        .prose table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            overflow-x: auto;
-            display: block;
+        @media (max-width: 480px) {
+            .version-selector {
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: stretch;
+                padding: 0.75rem;
+            }
+            
+            .version-label {
+                margin-right: 0;
+                text-align: center;
+            }
+            
+            .select-wrapper {
+                width: 100%;
+            }
+            
+            .select {
+                width: 100%;
+            }
+            
+            .btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.8rem;
+            }
+            
+            .timeline-header {
+                gap: 0.5rem;
+            }
+            
+            .timeline-header button {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.7rem;
+            }
+            
+            .subscription-form {
+                gap: 0.75rem;
+            }
+            
+            .form-control {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
+            }
+            
+            .subscription-message {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+            
+            .prose {
+                font-size: 0.95rem;
+            }
+            
+            .prose h1 { font-size: 1.25rem; }
+            .prose h2 { font-size: 1.1rem; }
+            .prose h3 { font-size: 1rem; }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            /* Styles for touch devices */
+            .btn, .modal-close, button {
+                min-height: 44px;
+                min-width: 44px;  /* Apple's recommended touch target size */
+            }
+            
+            .form-control {
+                min-height: 44px;
+            }
+            
+            .timeline-item {
+                margin-bottom: 1.25rem;
+            }
+            
+            .timeline-header button {
+                padding: 0.5rem 0.75rem;
+            }
+            
+            .select {
+                min-height: 44px;
+            }
+            
+            /* Add more space between touchable elements */
+            .tag-container {
+                gap: 1rem;
+            }
+            
+            .hero-buttons {
+                gap: 1.25rem;
+            }
+            
+            .footer-links {
+                gap: 2rem;
+            }
+        }
+        
+        /* Fix for iOS Safari bottom toolbar */
+        @supports (-webkit-touch-callout: none) {
+            .page-wrapper {
+                min-height: -webkit-fill-available;
+            }
+            
+            .modal-overlay {
+                padding-bottom: 4rem;
+            }
         }
 
-        .prose thead {
-            background-color: #f9fafb;
-            border-bottom: 2px solid #e5e7eb;
+        /* System Notification Styles */
+        .status {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 0.5rem;
         }
 
-        .prose th, .prose td {
-            padding: 0.75rem;
-            text-align: left;
-            border: 1px solid #e5e7eb;
+        .status.success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
         }
 
-        .prose th {
-            font-weight: 600;
+        .status.error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
         }
 
-        .prose tr:nth-child(even) {
+        .status.loading {
             background-color: #f3f4f6;
+            color: var(--text-medium);
+            border: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
         }
-
-        /* Improved blockquote styling */
-        .prose blockquote {
-            border-left: 4px solid #9333ea;
-            padding-left: 1rem;
-            margin: 1rem 0;
-            color: #6b7280;
-            font-style: italic;
+        
+        /* Ensure the spinner is consistent with delete.html */
+        .status .spinner {
+            margin: 0.5rem auto;
+        }
+        
+        /* Mobile-friendly adjustments for notifications */
+        @media (max-width: 480px) {
+            #systemNotificationModal .modal-container {
+                width: 90%;
+                max-width: 90%;
+            }
+            
+            .status {
+                padding: 0.75rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-icon">
-                        <span style="font-size: 2rem;">👨‍🍳</span>
-                    <h1>What's Cooking?</h1>
-                </div>
-                <p>Discover what's brewing in the Appwrite kitchen! AI-powered analysis of the latest commits with real-time insights.</p>
-                <div class="hero-badges">
-                    <div class="badge">
-                        <span>✨</span>
-                        AI-Powered
+    <div class="page-wrapper">
+        <!-- Hero Section -->
+        <header class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-title">
+                        <span class="hero-emoji">👨‍🍳</span>
+                        <h1>What's Cooking?</h1>
                     </div>
-                    <div class="badge">
-                        <span>📈</span>
-                        Real-time Updates
+                    <p class="hero-description">Discover what's brewing in the Appwrite kitchen! AI-powered analysis of the latest commits with real-time insights.</p>
+                    
+                    <div class="tag-container">
+                        <div class="tag">
+                            <span>✨</span>
+                            AI-Powered
+                        </div>
+                        <div class="tag">
+                            <span>📈</span>
+                            Real-time Updates
+                        </div>
+                        <div class="tag">
+                            <span>🔍</span>
+                            Feature Detection
+                        </div>
+                    </div>
+                    
+                    <div class="hero-buttons">
+                        <button id="learnMoreBtn" class="btn btn-primary">
+                            <span>🔍</span>
+                            Learn How It Works
+                        </button>
+                        <button id="subscribeBtn" class="btn btn-secondary">
+                            <span class="bell-icon">🔔</span>
+                            Subscribe to Alerts
+                        </button>
                     </div>
                 </div>
-                <button id="learnMoreBtn" class="btn btn-primary" style="margin-top: 1.5rem;">
-                    <span>🔍</span>
-                    Learn How It Works
-                </button>
+            </div>
+        </header>
+
+        <main>
+            <div class="container">
+                <!-- Version Selector -->
+                <div class="version-selector">
+                    <span class="version-label">Select Appwrite Version:</span>
+                    <div class="select-wrapper">
+                        <select id="versionSelector" class="form-control select" onchange="loadAnalysis(this.value)">
+                            <option value="1.8.x">Version 1.8.x</option>
+                            <option value="1.7.x">Version 1.7.x</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="card">
+                    <div class="card-body">
+                        <div class="loading-container">
+                            <div class="spinner"></div>
+                            <h3 style="margin: 0; color: var(--primary-color);">Analyzing Latest Commits</h3>
+                        </div>
+                        <div class="skeleton skeleton-line" style="width: 100%;"></div>
+                        <div class="skeleton skeleton-line" style="width: 75%;"></div>
+                        <div class="skeleton skeleton-block"></div>
+                        <p style="text-align: center; margin-top: 1rem; color: var(--text-medium);">
+                            Fetching and analyzing the latest Appwrite commits...
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Error State -->
+                <div id="errorState" class="alert error" style="display: none;">
+                    <span style="font-size: 1.5rem;">⚠️</span>
+                    <div>
+                        <strong>Analysis Failed</strong>
+                        <p style="margin: 0.25rem 0 0 0;">Unable to fetch the latest analysis. Please try refreshing the page.</p>
+                        <button onclick="loadAnalysis()" class="btn btn-secondary" style="margin-top: 0.75rem;">
+                            <span>🔄</span>
+                            Retry Analysis
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Container -->
+                <div id="resultsContainer" style="display: none;">
+                    <div class="results-grid">
+                        <div class="main-content">
+                            <!-- New Features Analysis -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title-group">
+                                        <div class="card-icon primary">✨</div>
+                                        <h2 class="card-title">Feature Detection Analysis</h2>
+                                    </div>
+                                    <div class="badge-group">
+                                        <div id="versionBadge" class="badge primary">Version 1.8.x</div>
+                                        <div id="featureBadge" class="badge success">✓ New Feature Detected</div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div id="newFeaturesContent" class="prose"></div>
+                                </div>
+                            </div>
+
+                            <!-- Commit Summary -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title-group">
+                                        <div class="card-icon info">📊</div>
+                                        <h2 class="card-title">Recent Activity Overview</h2>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div id="summaryContent" class="prose"></div>
+                                </div>
+                            </div>
+
+                            <!-- Last Updated -->
+                            <div class="last-updated">
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                    <span>📅</span>
+                                    <span id="lastUpdated">Last updated: --</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sidebar">
+                            <!-- Analysis History -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-title-group">
+                                        <div class="card-icon warning">🕐</div>
+                                        <h2 class="card-title">Analysis History</h2>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div id="historyContainer">
+                                        <div class="skeleton skeleton-block"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Support Section -->
+                <div class="card" style="text-align: center; margin-top: 2rem;">
+                    <div class="card-body">
+                        <h3 style="margin-bottom: 1rem;">Enjoying this tool?</h3>
+                        <a href="https://buymeacoffee.com/whmonkey" target="_blank" class="btn btn-primary">
+                            <span>☕</span>
+                            Buy me a coffee
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-text">
+                        Made with ❤️ using Appwrite
+                    </div>
+                    <div class="footer-links">
+                        <a href="https://github.com/WhineyMonkey10/WhatsCooking" target="_blank" class="footer-link">
+                            View Source
+                        </a>
+                        <a href="https://github.com/appwrite/appwrite" target="_blank" class="footer-link">
+                            Appwrite GitHub
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Modal for How It Works -->
+        <div id="howItWorksModal" class="modal-overlay">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3 class="modal-title">How It Works</h3>
+                    <button class="modal-close" id="closeModalBtn">×</button>
+                </div>
+                <div class="modal-body">
+                    <p style="color: var(--text-medium); margin-bottom: 1.5rem;">
+                        Automated analysis of Appwrite's latest commits every 24 hours
+                    </p>
+                    <div style="margin-bottom: 1.5rem;">
+                        <a href="https://github.com/WhineyMonkey10/WhatsCooking" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 0.5rem;">
+                            <span>⭐</span>
+                            View Source Code
+                        </a>
+                    </div>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon blue">🕐</div>
+                            <h3 class="feature-title">Daily Schedule</h3>
+                            <p class="feature-desc">Runs every 24 hours to check for new commits</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon green">🔍</div>
+                            <h3 class="feature-title">Smart Analysis</h3>
+                            <p class="feature-desc">Examines the 5 most recent commits for changes</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon purple">🤖</div>
+                            <h3 class="feature-title">AI Detection</h3>
+                            <p class="feature-desc">Uses AI to identify potential new features</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon orange">📊</div>
+                            <h3 class="feature-title">Live Results</h3>
+                            <p class="feature-desc">Updates automatically with fresh insights</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
 
-    <!-- Modal for How It Works -->
-    <div id="howItWorksModal" class="modal-overlay">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h2 class="card-title large" style="margin: 0;">How It Works</h2>
-                <button class="modal-close" id="closeModalBtn">×</button>
-            </div>
-            <div class="modal-body">
-                <p style="color: #6b7280; margin-top: 0.5rem; margin-bottom: 1.5rem;">Automated analysis of Appwrite's latest commits every 24 hours</p>
-                <div style="margin-bottom: 1.5rem;">
-                    <a href="https://github.com/WhineyMonkey10/WhatsCooking" target="_blank" style="color: #9333ea; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 0.5rem;">
-                        <span>⭐</span>
-                        View Source Code
-                    </a>
+        <!-- Email Subscription Modal -->
+        <div id="subscriptionModal" class="modal-overlay">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3 class="modal-title">Subscribe to New Feature Alerts</h3>
+                    <button class="modal-close" id="closeSubscriptionBtn">×</button>
                 </div>
-                <div class="how-it-works-grid">
-                    <div class="step-card">
-                        <div class="step-icon blue">
-                            <span style="font-size: 1.5rem; color: white;">🕐</span>
+                <div class="modal-body">
+                    <p style="margin-bottom: 1.5rem; color: var(--text-medium);">
+                        Get notified by email when we detect new features in Appwrite's latest commits.
+                    </p>
+                    <form id="subscriptionForm" class="subscription-form">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="emailInput" class="form-label">Email Address</label>
+                            <input type="email" id="emailInput" class="form-control" placeholder="your@email.com" required>
                         </div>
-                        <h3 class="step-title">Daily Schedule</h3>
-                        <p class="step-description">Runs every 24 hours to check for new commits</p>
+                        <button type="submit" class="btn btn-primary">
+                            <span>🔔</span>
+                            Subscribe
+                        </button>
+                    </form>
+                    <!-- Loading indicator -->
+                    <div id="subscriptionLoading" class="subscription-loading" style="display:none;">
+                        <div class="subscription-spinner"></div>
+                        <span>Processing...</span>
                     </div>
-                    <div class="step-card">
-                        <div class="step-icon green">
-                            <span style="font-size: 1.5rem; color: white;">🔍</span>
+                    <!-- Confirmation for delete -->
+                    <div id="deleteConfirm" style="display:none; margin-top:1.5rem;">
+                        <div style="margin-bottom:1rem;">
+                            <strong>This email is already subscribed.</strong><br>
+                            Do you want to receive an email to delete your account and unsubscribe?
                         </div>
-                        <h3 class="step-title">Smart Analysis</h3>
-                        <p class="step-description">Examines the 5 most recent commits for changes</p>
+                        <div style="display:flex; gap:1rem;">
+                            <button id="deleteYesBtn" class="btn btn-primary" type="button">Yes</button>
+                            <button id="deleteNoBtn" class="btn btn-secondary" type="button">No</button>
+                        </div>
                     </div>
-                    <div class="step-card">
-                        <div class="step-icon purple">
-                            <span style="font-size: 1.5rem; color: white;">🤖</span>
-                        </div>
-                        <h3 class="step-title">AI Detection</h3>
-                        <p class="step-description">Uses AI to identify potential new features</p>
+                    <div id="subscriptionSuccess" class="subscription-message success">
+                        <strong>Successfully subscribed! Check your email for a verification link to start receiving updates.</strong> You'll receive email notifications when we detect new features. You can always delete your account (and stop receiving emails) by entering your email again here which will send you a confirmation email. Remember to check your spam! You can also unsubscribe at any time by clicking the unsubscribe link in the email which will automatically delete your account.
                     </div>
-                    <div class="step-card">
-                        <div class="step-icon orange">
-                            <span style="font-size: 1.5rem; color: white;">📊</span>
-                        </div>
-                        <h3 class="step-title">Live Results</h3>
-                        <p class="step-description">Updates automatically with fresh insights</p>
+                    <div id="subscriptionError" class="subscription-message error">
+                        <strong>Subscription failed.</strong> <span id="errorMessage">Please try again later.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Notification Modal -->
+        <div id="systemNotificationModal" class="modal-overlay">
+            <div class="modal-container" style="max-width: 500px;">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="notificationTitle">Notification</h3>
+                    <button class="modal-close" id="closeNotificationBtn">×</button>
+                </div>
+                <div class="modal-body">
+                    <div id="loadingNotification" class="status loading" style="display: none;">
+                        <div class="spinner"></div>
+                        <p id="loadingMessage">Processing your request...</p>
+                    </div>
+                    
+                    <div id="successNotification" class="status success" style="display: none;">
+                        <p><strong id="successTitle">Success!</strong></p>
+                        <p id="successMessage">Your request has been processed successfully.</p>
+                    </div>
+                    
+                    <div id="errorNotification" class="status error" style="display: none;">
+                        <p><strong id="errorTitle">Error</strong></p>
+                        <p id="errorMessage">An error occurred while processing your request. If you tried to delete your account, please click on the link again/refresh the page as it is possible that our service providers are experiencing issues.</p>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 1.5rem;">
+                        <button id="notificationActionBtn" class="btn btn-primary" style="display: none;">
+                            Continue
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="container" style="padding: 3rem 0;">
-        <!-- Version Selector -->
-        <div class="card">
-            <div class="form-group">
-                <label for="versionSelector" style="font-weight: 500; color: #374151;">Select Appwrite Version:</label>
-                <select id="versionSelector" class="select" onchange="loadAnalysis(this.value)">
-                    <option value="1.8.x">Version 1.8.x</option>
-                    <option value="1.7.x">Version 1.7.x</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Loading State -->
-        <div id="loadingState" class="card">
-            <div class="card-header">
-                <div class="loading-container">
-                    <div class="spinner"></div>
-                    <h3 style="color: #9333ea; margin: 0;">Analyzing Latest Commits</h3>
-                </div>
-            </div>
-            <div class="skeleton skeleton-line" style="width: 100%;"></div>
-            <div class="skeleton skeleton-line" style="width: 75%;"></div>
-            <div class="skeleton skeleton-block"></div>
-            <p style="text-align: center; margin-top: 1rem; color: #6b7280;">
-                Fetching and analyzing the latest Appwrite commits...
-            </p>
-        </div>
-
-        <!-- Error State -->
-        <div id="errorState" class="alert error" style="display: none;">
-            <span>⚠️</span>
-            <div>
-                <strong>Analysis Failed</strong>
-                <p style="margin: 0.25rem 0 0 0;">Unable to fetch the latest analysis. Please try refreshing the page.</p>
-                <button onclick="loadAnalysis()" class="btn btn-secondary" style="margin-top: 0.5rem;">
-                    <span>🔄</span>
-                    Retry Analysis
-                </button>
-            </div>
-        </div>
-
-        <!-- Results Container -->
-        <div id="resultsContainer" style="display: none;">
-            <!-- New Features Analysis -->
-            <div class="card">
-                <div class="analysis-header">
-                    <div class="analysis-title">
-                        <div class="analysis-icon purple">
-                            <span style="color: white;">✨</span>
-                        </div>
-                        <h2 class="card-title">Feature Detection Analysis</h2>
-                    </div>
-                    <div class="analysis-badges">
-                        <div id="versionBadge" class="status-badge version">Version 1.8.x</div>
-                        <div id="featureBadge" class="status-badge success">✓ New Feature Detected</div>
-                    </div>
-                </div>
-                <div id="newFeaturesContent" class="prose"></div>
-            </div>
-
-            <!-- Commit Summary -->
-            <div class="card">
-                <div class="analysis-header">
-                    <div class="analysis-title">
-                        <div class="analysis-icon blue">
-                            <span style="color: white;">📊</span>
-                        </div>
-                        <h2 class="card-title">Recent Activity Overview</h2>
-                    </div>
-                </div>
-                <div id="summaryContent" class="prose"></div>
-            </div>
-
-            <!-- Last Updated -->
-            <div style="text-center; color: #6b7280; margin: 2rem 0;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                    <span>📅</span>
-                    <span id="lastUpdated">Last updated: --</span>
-                </div>
-            </div>
-
-            <!-- Analysis History -->
-            <div class="card">
-                <div class="analysis-header">
-                    <div class="analysis-title">
-                        <div class="analysis-icon orange">
-                            <span style="color: white;">🕐</span>
-                        </div>
-                        <h2 class="card-title">Analysis History</h2>
-                    </div>
-                </div>
-                <div id="historyContainer">
-                    <div class="skeleton skeleton-block"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Support Section -->
-        <div class="support-section">
-            <p style="color: #6b7280; margin-bottom: 1rem;">
-                Enjoying this tool? 
-                <a href="https://buymeacoffee.com/whmonkey" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem;">
-                    <span>☕</span>
-                    Buy me a coffee
-                </a>
-            </p>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p style="color: #6b7280;">
-                Made with ❤️ using Appwrite • Data from 
-                <a href="https://github.com/appwrite/appwrite" target="_blank" style="color: #9333ea; text-decoration: none;">
-                    Appwrite GitHub
-                </a>
-            </p>
-        </div>
-    </footer>
 
     <script>
         // Appwrite configuration
@@ -825,10 +1240,11 @@
         const COLLECTION_ID = '6890dee0000a5ecd829e';
 
         // Initialize Appwrite
-        const { Client, Databases, Query } = Appwrite;
+        const { Client, Databases, Query, Account, ID } = Appwrite;
         const client = new Client();
         client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
         const databases = new Databases(client);
+        const account = new Account(client);
 
         let currentVersion = '1.8.x';
         let analysesCache = { '1.7.x': [], '1.8.x': [] };
@@ -895,12 +1311,12 @@
                     displayAnalysisHistory(response.documents.slice(1));
                 } else {
                     document.getElementById('historyContainer').innerHTML = 
-                        '<div class="history-item"><p>No historical data available for this version.</p></div>';
+                        '<div class="timeline-item"><p>No historical data available for this version.</p></div>';
                 }
             } catch (error) {
                 console.error('Error loading analysis history:', error);
                 document.getElementById('historyContainer').innerHTML = 
-                    '<div class="history-item"><p>Failed to load analysis history.</p></div>';
+                    '<div class="timeline-item"><p>Failed to load analysis history.</p></div>';
             }
         }
 
@@ -909,7 +1325,7 @@
             const historyContainer = document.getElementById('historyContainer');
             
             if (analyses.length === 0) {
-                historyContainer.innerHTML = '<div class="history-item"><p>No previous analysis history available yet.</p></div>';
+                historyContainer.innerHTML = '<div class="timeline-item"><p>No previous analysis history available yet.</p></div>';
                 return;
             }
 
@@ -917,26 +1333,26 @@
             analyses.forEach((analysis, index) => {
                 const date = new Date(analysis.$createdAt).toLocaleString();
                 const hasNewFeature = analysis.newFeatureFlag;
-                const itemClass = hasNewFeature ? 'has-feature' : 'no-feature';
+                const itemClass = hasNewFeature ? 'feature' : 'no-feature';
                 const badgeClass = hasNewFeature ? 'success' : 'neutral';
                 const badgeText = hasNewFeature ? '✓ New Feature' : '✗ No Features';
 
                 historyHTML += `
-                    <div class="history-item ${itemClass}">
-                        <div class="history-header">
-                            <div class="history-date">
+                    <div class="timeline-item ${itemClass}">
+                        <div class="timeline-header">
+                            <div class="timeline-date">
                                 <span>📅</span>
                                 <span>${date}</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <div class="status-badge ${badgeClass}">${badgeText}</div>
-                                <button class="btn btn-secondary" onclick="toggleHistory('${analysis.$id}')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
-                                    <span id="toggle-${analysis.$id}">Show Details</span>
+                                <div class="badge ${badgeClass}">${badgeText}</div>
+                                <button class="btn btn-secondary" onclick="toggleHistory('${analysis.$id}')" style="padding: 0.375rem 0.75rem; font-size: 0.75rem;">
+                                    <span id="toggle-${analysis.$id}">Details</span>
                                     <span id="chevron-${analysis.$id}">▼</span>
                                 </button>
                             </div>
                         </div>
-                        <div id="content-${analysis.$id}" class="history-content">
+                        <div id="content-${analysis.$id}" class="timeline-content">
                             <div class="prose">${formatText(analysis.newFeaturesAnalysis)}</div>
                         </div>
                     </div>
@@ -954,7 +1370,7 @@
 
             if (content.classList.contains('expanded')) {
                 content.classList.remove('expanded');
-                toggle.textContent = 'Show Details';
+                toggle.textContent = 'Details';
                 chevron.textContent = '▼';
             } else {
                 content.classList.add('expanded');
@@ -1058,7 +1474,7 @@
             versionBadge.textContent = `Version ${data.trackedVersion}`;
             
             if (data.hasOwnProperty('newFeatureFlag')) {
-                featureBadge.className = `status-badge ${data.newFeatureFlag ? 'success' : 'neutral'}`;
+                featureBadge.className = `badge ${data.newFeatureFlag ? 'success' : 'neutral'}`;
                 featureBadge.textContent = data.newFeatureFlag ? '✓ New Feature Detected' : '✗ No New Features Found';
             }
 
@@ -1075,40 +1491,333 @@
             errorState.style.display = 'flex';
         }
 
+        // System Notification Functions
+        const systemNotificationModal = document.getElementById('systemNotificationModal');
+        const notificationTitle = document.getElementById('notificationTitle');
+        const loadingNotification = document.getElementById('loadingNotification');
+        const successNotification = document.getElementById('successNotification');
+        const errorNotification = document.getElementById('errorNotification');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const successTitle = document.getElementById('successTitle');
+        const successMessage = document.getElementById('successMessage');
+        const errorTitle = document.getElementById('errorTitle');
+        const errorMessage = document.getElementById('errorMessage');
+        const closeNotificationBtn = document.getElementById('closeNotificationBtn');
+        const notificationActionBtn = document.getElementById('notificationActionBtn');
+
+        // Show loading notification
+        function showLoadingNotification(message) {
+            resetNotifications();
+            notificationTitle.textContent = 'Processing';
+            loadingMessage.textContent = message;
+            loadingNotification.style.display = 'block';
+            systemNotificationModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Show success notification
+        function showSuccessNotification(title, message, actionText = null, actionCallback = null) {
+            resetNotifications();
+            notificationTitle.textContent = 'Success';
+            successTitle.textContent = title;
+            successMessage.textContent = message;
+            successNotification.style.display = 'block';
+            
+            if (actionText && actionCallback) {
+                notificationActionBtn.textContent = actionText;
+                notificationActionBtn.style.display = 'inline-flex';
+                notificationActionBtn.onclick = actionCallback;
+            }
+            
+            systemNotificationModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Show error notification
+        function showErrorNotification(title, message) {
+            resetNotifications();
+            notificationTitle.textContent = 'Error';
+            errorTitle.textContent = title;
+            errorMessage.textContent = message;
+            errorNotification.style.display = 'block';
+            systemNotificationModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Reset all notifications
+        function resetNotifications() {
+            loadingNotification.style.display = 'none';
+            successNotification.style.display = 'none';
+            errorNotification.style.display = 'none';
+            notificationActionBtn.style.display = 'none';
+            notificationActionBtn.onclick = null;
+        }
+
+        // Close notification modal
+        closeNotificationBtn.addEventListener('click', function() {
+            systemNotificationModal.classList.remove('active');
+            document.body.style.overflow = '';
+            resetNotifications();
+        });
+
+        // Close notification when clicking outside
+        systemNotificationModal.addEventListener('click', function(event) {
+            if (event.target === systemNotificationModal) {
+                systemNotificationModal.classList.remove('active');
+                document.body.style.overflow = '';
+                resetNotifications();
+            }
+        });
+
         // Modal functionality
         document.addEventListener('DOMContentLoaded', function() {
             // Existing initialization
             console.log('DOM loaded, starting analysis...');
+            
+            // Check for URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('userId');
+            const secret = urlParams.get('secret');
+            const unsubscribeToken = urlParams.get('unsubscribeToken');
+            
+            // Handle unsubscribe token if present
+            if (unsubscribeToken) {
+                const { Functions } = Appwrite;
+                const functions = new Functions(client);
+                
+                // Show loading notification instead of alert
+                showLoadingNotification('Processing your unsubscribe request...');
+                
+                // Function to execute account deletion with retry logic
+                const executeAccountDeletion = async (retryCount = 0, maxRetries = 5) => {
+                    try {
+                        // Call the account deletion function with the token as the body
+                        const response = await functions.createExecution(
+                            '68965a750018504bab79',
+                            unsubscribeToken
+                        );
+
+                        if (response.status === 'completed') {
+                            showSuccessNotification('Unsubscribed', 'You have been successfully unsubscribed and your account has been deleted.');
+                        } else {
+                            throw new Error('Function execution failed');
+                        }
+                    } catch (error) {
+                        console.error(`Unsubscribe error (attempt ${retryCount + 1}):`, error);
+                        
+                        // If we haven't reached max retries, try again
+                        if (retryCount < maxRetries) {
+                            // Calculate exponential backoff delay (1s, 2s, 4s, 8s, 16s)
+                            const delay = Math.pow(2, retryCount) * 1000;
+                            
+                            // Update loading message to show retry status
+                            loadingMessage.textContent = `Processing your unsubscribe request... (Retry ${retryCount + 1}/${maxRetries})`;
+                            
+                            // Try again after delay
+                            setTimeout(() => executeAccountDeletion(retryCount + 1, maxRetries), delay);
+                        } else {
+                            // All retries failed
+                            showErrorNotification(
+                                'Request Failed', 
+                                'Failed to process your unsubscribe request after multiple attempts. Please try again later or contact support.'
+                            );
+                        }
+                    }
+                };
+                
+                // Start the deletion process with retry
+                executeAccountDeletion();
+            }
+            
+            // If both parameters exist, complete the verification process
+            if (userId && secret) {
+                try {
+                    showLoadingNotification('Verifying your email...');
+                    
+                    account.updateVerification(userId, secret)
+                        .then(() => {
+                            showSuccessNotification('Verification Successful', 'Email verification successful! Your subscription is now active.');
+                        })
+                        .catch(error => {
+                            console.error('Verification error:', error);
+                            showErrorNotification('Verification Failed', 'The link may have expired or already been used.');
+                        });
+                } catch (error) {
+                    console.error('Verification error:', error);
+                    showErrorNotification('Verification Error', 'An unexpected error occurred during verification.');
+                }
+            }
+            
             loadAnalysis();
             
-            // Modal controls
-            const modal = document.getElementById('howItWorksModal');
+            // How it works modal controls
+            const howItWorksModal = document.getElementById('howItWorksModal');
             const openModalBtn = document.getElementById('learnMoreBtn');
             const closeModalBtn = document.getElementById('closeModalBtn');
             
             openModalBtn.addEventListener('click', function() {
-                modal.classList.add('active');
+                howItWorksModal.classList.add('active');
                 document.body.style.overflow = 'hidden'; // Prevent scrolling
             });
             
             closeModalBtn.addEventListener('click', function() {
-                modal.classList.remove('active');
+                howItWorksModal.classList.remove('active');
                 document.body.style.overflow = ''; // Enable scrolling
             });
             
             // Close modal when clicking outside
-            modal.addEventListener('click', function(event) {
-                if (event.target === modal) {
-                    modal.classList.remove('active');
+            howItWorksModal.addEventListener('click', function(event) {
+                if (event.target === howItWorksModal) {
+                    howItWorksModal.classList.remove('active');
                     document.body.style.overflow = '';
                 }
             });
             
-            // Close modal with escape key
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape' && modal.classList.contains('active')) {
-                    modal.classList.remove('active');
+            // Subscription modal controls
+            const subscriptionModal = document.getElementById('subscriptionModal');
+            const subscribeBtn = document.getElementById('subscribeBtn');
+            const closeSubscriptionBtn = document.getElementById('closeSubscriptionBtn');
+            const subscriptionForm = document.getElementById('subscriptionForm');
+            const subscriptionSuccess = document.getElementById('subscriptionSuccess');
+            const subscriptionError = document.getElementById('subscriptionError');
+            const errorMessage = document.getElementById('errorMessage');
+            const deleteConfirm = document.getElementById('deleteConfirm');
+            const deleteYesBtn = document.getElementById('deleteYesBtn');
+            const deleteNoBtn = document.getElementById('deleteNoBtn');
+            let submitButton = subscriptionForm.querySelector('button[type="submit"]');
+            let originalButtonContent = submitButton.innerHTML;
+
+            subscribeBtn.addEventListener('click', function() {
+                subscriptionModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                subscriptionForm.reset();
+                subscriptionSuccess.style.display = 'none';
+                subscriptionError.style.display = 'none';
+                deleteConfirm.style.display = 'none';
+                subscriptionForm.style.display = 'flex';
+                
+                // Reset button to original state
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonContent;
+            });
+
+            closeSubscriptionBtn.addEventListener('click', function() {
+                subscriptionModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+
+            subscriptionModal.addEventListener('click', function(event) {
+                if (event.target === subscriptionModal) {
+                    subscriptionModal.classList.remove('active');
                     document.body.style.overflow = '';
+                }
+            });
+
+            // Handle subscription form submission
+            subscriptionForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                
+                // Update button to loading state
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<div class="subscription-spinner" style="width: 20px; height: 20px; margin: 0 auto;"></div>';
+                
+                subscriptionSuccess.style.display = 'none';
+                subscriptionError.style.display = 'none';
+                deleteConfirm.style.display = 'none';
+
+                const email = document.getElementById('emailInput').value.trim();
+                if (!email) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonContent;
+                    showSubscriptionError('Please enter a valid email address.');
+                    return;
+                }
+
+                try {
+                    // Create new user
+                    const randomPassword = Math.random().toString(36).slice(-10);
+                    try {
+                        await account.create('unique()', email, randomPassword, email.split('@')[0]);
+                        await account.createEmailPasswordSession(email, randomPassword);
+                        await account.createVerification(window.location.origin + '/');
+                        showSubscriptionSuccess();
+                    } catch (error) {
+                        console.error('Error creating user:', error);
+                        
+                        // Check for user already exists error
+                        if (error && error.type === "user_already_exists") {
+                            // Show confirmation dialog
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = originalButtonContent;
+                            subscriptionForm.style.display = 'none';
+                            deleteConfirm.style.display = 'block';
+
+                            deleteYesBtn.onclick = async function() {
+                                deleteYesBtn.disabled = true;
+                                deleteYesBtn.innerHTML = '<div class="subscription-spinner" style="width: 20px; height: 20px; margin: 0 auto;"></div>';
+                                deleteNoBtn.disabled = true;
+                                
+                                try {
+                                    // Send delete account email
+                                    await account.createMagicURLToken(ID.unique(),
+                                    email,
+                                    window.location.origin + '/delete.html');
+                                    showSubscriptionSuccess('A confirmation email has been sent to delete your account. Please check your inbox. Remember to check your spam folder!');
+                                } catch (err) {
+                                    console.error('Error sending recovery email:', err);
+                                    showSubscriptionError('Failed to send delete email. Please try again later.');
+                                    deleteYesBtn.disabled = false;
+                                    deleteYesBtn.innerHTML = 'Yes';
+                                    deleteNoBtn.disabled = false;
+                                }
+                            };
+
+                            deleteNoBtn.onclick = function() {
+                                subscriptionModal.classList.remove('active');
+                                document.body.style.overflow = '';
+                            };
+                        } else {
+                            showSubscriptionError('Failed to subscribe. Please try again later.');
+                        }
+                    }
+                } catch (error) {
+                    console.error('General subscription error:', error);
+                    showSubscriptionError('Failed to subscribe. Please try again later.');
+                }
+            });
+
+            function showSubscriptionSuccess(msg) {
+                subscriptionForm.style.display = 'none';
+                subscriptionSuccess.style.display = 'block';
+                subscriptionError.style.display = 'none';
+                
+                // Reset button
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonContent;
+                
+                if (msg) subscriptionSuccess.innerHTML = `<strong>Success!</strong> ${msg}`;
+            }
+
+            function showSubscriptionError(message) {
+                subscriptionError.style.display = 'block';
+                errorMessage.textContent = message || 'Please try again later.';
+                
+                // Reset button
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonContent;
+            }
+
+            // Close modals with escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    if (howItWorksModal.classList.contains('active')) {
+                        howItWorksModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                    if (subscriptionModal.classList.contains('active')) {
+                        subscriptionModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
                 }
             });
         });
