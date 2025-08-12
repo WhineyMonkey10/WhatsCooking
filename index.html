@@ -1219,7 +1219,7 @@
                     
                     <div id="errorNotification" class="status error" style="display: none;">
                         <p><strong id="errorTitle">Error</strong></p>
-                        <p id="errorMessage">An error occurred while processing your request.</p>
+                        <p id="errorMessage">An error occurred while processing your request. If you tried to delete your account, please click on the link again/refresh the page as it is possible that our service providers are experiencing issues.</p>
                     </div>
                     
                     <div style="text-align: center; margin-top: 1.5rem;">
@@ -1588,22 +1588,45 @@
                 // Show loading notification instead of alert
                 showLoadingNotification('Processing your unsubscribe request...');
                 
-                // Call the account deletion function with the token as the body
-                functions.createExecution(
-                    '68965a750018504bab79',
-                    unsubscribeToken
-                )
-                .then(response => {
-                    if (response.status === 'completed') {
-                        showSuccessNotification('Unsubscribed', 'You have been successfully unsubscribed and your account has been deleted.');
-                    } else {
-                        throw new Error('Function execution failed');
+                // Function to execute account deletion with retry logic
+                const executeAccountDeletion = async (retryCount = 0, maxRetries = 5) => {
+                    try {
+                        // Call the account deletion function with the token as the body
+                        const response = await functions.createExecution(
+                            '68965a750018504bab79',
+                            unsubscribeToken
+                        );
+
+                        if (response.status === 'completed') {
+                            showSuccessNotification('Unsubscribed', 'You have been successfully unsubscribed and your account has been deleted.');
+                        } else {
+                            throw new Error('Function execution failed');
+                        }
+                    } catch (error) {
+                        console.error(`Unsubscribe error (attempt ${retryCount + 1}):`, error);
+                        
+                        // If we haven't reached max retries, try again
+                        if (retryCount < maxRetries) {
+                            // Calculate exponential backoff delay (1s, 2s, 4s, 8s, 16s)
+                            const delay = Math.pow(2, retryCount) * 1000;
+                            
+                            // Update loading message to show retry status
+                            loadingMessage.textContent = `Processing your unsubscribe request... (Retry ${retryCount + 1}/${maxRetries})`;
+                            
+                            // Try again after delay
+                            setTimeout(() => executeAccountDeletion(retryCount + 1, maxRetries), delay);
+                        } else {
+                            // All retries failed
+                            showErrorNotification(
+                                'Request Failed', 
+                                'Failed to process your unsubscribe request after multiple attempts. Please try again later or contact support.'
+                            );
+                        }
                     }
-                })
-                .catch(error => {
-                    console.error('Unsubscribe error:', error);
-                    showErrorNotification('Request Failed', 'Failed to process your unsubscribe request. Please try again later.');
-                });
+                };
+                
+                // Start the deletion process with retry
+                executeAccountDeletion();
             }
             
             // If both parameters exist, complete the verification process
