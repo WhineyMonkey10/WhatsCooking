@@ -884,6 +884,52 @@
                 padding-bottom: 4rem;
             }
         }
+
+        /* System Notification Styles */
+        .status {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 0.5rem;
+        }
+
+        .status.success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status.error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .status.loading {
+            background-color: #f3f4f6;
+            color: var(--text-medium);
+            border: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        /* Ensure the spinner is consistent with delete.html */
+        .status .spinner {
+            margin: 0.5rem auto;
+        }
+        
+        /* Mobile-friendly adjustments for notifications */
+        @media (max-width: 480px) {
+            #systemNotificationModal .modal-container {
+                width: 90%;
+                max-width: 90%;
+            }
+            
+            .status {
+                padding: 0.75rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1152,6 +1198,38 @@
                 </div>
             </div>
         </div>
+
+        <!-- System Notification Modal -->
+        <div id="systemNotificationModal" class="modal-overlay">
+            <div class="modal-container" style="max-width: 500px;">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="notificationTitle">Notification</h3>
+                    <button class="modal-close" id="closeNotificationBtn">×</button>
+                </div>
+                <div class="modal-body">
+                    <div id="loadingNotification" class="status loading" style="display: none;">
+                        <div class="spinner"></div>
+                        <p id="loadingMessage">Processing your request...</p>
+                    </div>
+                    
+                    <div id="successNotification" class="status success" style="display: none;">
+                        <p><strong id="successTitle">Success!</strong></p>
+                        <p id="successMessage">Your request has been processed successfully.</p>
+                    </div>
+                    
+                    <div id="errorNotification" class="status error" style="display: none;">
+                        <p><strong id="errorTitle">Error</strong></p>
+                        <p id="errorMessage">An error occurred while processing your request.</p>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 1.5rem;">
+                        <button id="notificationActionBtn" class="btn btn-primary" style="display: none;">
+                            Continue
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1413,6 +1491,84 @@
             errorState.style.display = 'flex';
         }
 
+        // System Notification Functions
+        const systemNotificationModal = document.getElementById('systemNotificationModal');
+        const notificationTitle = document.getElementById('notificationTitle');
+        const loadingNotification = document.getElementById('loadingNotification');
+        const successNotification = document.getElementById('successNotification');
+        const errorNotification = document.getElementById('errorNotification');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const successTitle = document.getElementById('successTitle');
+        const successMessage = document.getElementById('successMessage');
+        const errorTitle = document.getElementById('errorTitle');
+        const errorMessage = document.getElementById('errorMessage');
+        const closeNotificationBtn = document.getElementById('closeNotificationBtn');
+        const notificationActionBtn = document.getElementById('notificationActionBtn');
+
+        // Show loading notification
+        function showLoadingNotification(message) {
+            resetNotifications();
+            notificationTitle.textContent = 'Processing';
+            loadingMessage.textContent = message;
+            loadingNotification.style.display = 'block';
+            systemNotificationModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Show success notification
+        function showSuccessNotification(title, message, actionText = null, actionCallback = null) {
+            resetNotifications();
+            notificationTitle.textContent = 'Success';
+            successTitle.textContent = title;
+            successMessage.textContent = message;
+            successNotification.style.display = 'block';
+            
+            if (actionText && actionCallback) {
+                notificationActionBtn.textContent = actionText;
+                notificationActionBtn.style.display = 'inline-flex';
+                notificationActionBtn.onclick = actionCallback;
+            }
+            
+            systemNotificationModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Show error notification
+        function showErrorNotification(title, message) {
+            resetNotifications();
+            notificationTitle.textContent = 'Error';
+            errorTitle.textContent = title;
+            errorMessage.textContent = message;
+            errorNotification.style.display = 'block';
+            systemNotificationModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Reset all notifications
+        function resetNotifications() {
+            loadingNotification.style.display = 'none';
+            successNotification.style.display = 'none';
+            errorNotification.style.display = 'none';
+            notificationActionBtn.style.display = 'none';
+            notificationActionBtn.onclick = null;
+        }
+
+        // Close notification modal
+        closeNotificationBtn.addEventListener('click', function() {
+            systemNotificationModal.classList.remove('active');
+            document.body.style.overflow = '';
+            resetNotifications();
+        });
+
+        // Close notification when clicking outside
+        systemNotificationModal.addEventListener('click', function(event) {
+            if (event.target === systemNotificationModal) {
+                systemNotificationModal.classList.remove('active');
+                document.body.style.overflow = '';
+                resetNotifications();
+            }
+        });
+
         // Modal functionality
         document.addEventListener('DOMContentLoaded', function() {
             // Existing initialization
@@ -1429,8 +1585,8 @@
                 const { Functions } = Appwrite;
                 const functions = new Functions(client);
                 
-                // Show a loading message
-                alert('Processing your unsubscribe request...');
+                // Show loading notification instead of alert
+                showLoadingNotification('Processing your unsubscribe request...');
                 
                 // Call the account deletion function with the token as the body
                 functions.createExecution(
@@ -1439,30 +1595,33 @@
                 )
                 .then(response => {
                     if (response.status === 'completed') {
-                        alert('You have been successfully unsubscribed and your account has been deleted.');
+                        showSuccessNotification('Unsubscribed', 'You have been successfully unsubscribed and your account has been deleted.');
                     } else {
                         throw new Error('Function execution failed');
                     }
                 })
                 .catch(error => {
                     console.error('Unsubscribe error:', error);
-                    alert('Failed to process your unsubscribe request. Please try again later.');
+                    showErrorNotification('Request Failed', 'Failed to process your unsubscribe request. Please try again later.');
                 });
             }
             
             // If both parameters exist, complete the verification process
             if (userId && secret) {
                 try {
+                    showLoadingNotification('Verifying your email...');
+                    
                     account.updateVerification(userId, secret)
                         .then(() => {
-                            alert('Email verification successful! Your subscription is now active.');
+                            showSuccessNotification('Verification Successful', 'Email verification successful! Your subscription is now active.');
                         })
                         .catch(error => {
                             console.error('Verification error:', error);
-                            alert('Verification failed. The link may have expired or already been used.');
+                            showErrorNotification('Verification Failed', 'The link may have expired or already been used.');
                         });
                 } catch (error) {
                     console.error('Verification error:', error);
+                    showErrorNotification('Verification Error', 'An unexpected error occurred during verification.');
                 }
             }
             
