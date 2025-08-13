@@ -1,6 +1,6 @@
 more to add:
 
-1. rewrite frontend in Next
+1. rewrite frontend using express to serve html
 2. un-hardcode everything
 3. implemkent a feature for people to easily deploy this to their own appwrite instance directly from the website
     3.1 clean up the current appwrite stuff and create an appwrite.json file so that people can easily selfhost without having to use the button on the website

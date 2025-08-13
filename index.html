@@ -1234,23 +1234,146 @@
 
     <script>
         // Appwrite configuration
-        const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
-        const APPWRITE_PROJECT_ID = '6890d2c90034c3369acd';
-        const DATABASE_ID = '6890ded500064cf8b023';
-        const COLLECTION_ID = '6890dee0000a5ecd829e';
+        // load environment variables
+        let APPWRITE_ENDPOINT, APPWRITE_PROJECT_ID, DATABASE_ID, COLLECTION_ID, FUNCTION_ID;
+        let client, databases, account, Query, ID, Functions;
 
-        // Initialize Appwrite
-        const { Client, Databases, Query, Account, ID } = Appwrite;
-        const client = new Client();
-        client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
-        const databases = new Databases(client);
-        const account = new Account(client);
+        // Store URL parameters globally so they can be processed after initialization
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('userId');
+        const secret = urlParams.get('secret');
+        const unsubscribeToken = urlParams.get('unsubscribeToken');
+
+        // Initialize Appwrite only after we have the config variables
+        function initializeAppwrite() {
+            const { Client, Databases, Query: AppwriteQuery, Account: AppwriteAccount, ID: AppwriteID, Functions: AppwriteFunctions } = Appwrite;
+            
+            // Make these objects globally available
+            Query = AppwriteQuery;
+            ID = AppwriteID;
+            Functions = AppwriteFunctions;
+            
+            client = new Client();
+            client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
+            databases = new Databases(client);
+            account = new AppwriteAccount(client);
+            
+            console.log('Appwrite initialized with config:', {
+                APPWRITE_ENDPOINT,
+                APPWRITE_PROJECT_ID,
+                DATABASE_ID,
+                COLLECTION_ID,
+                FUNCTION_ID
+            });
+            
+            // Process URL parameters after initialization
+            processUrlParams();
+            
+            // Start loading analysis data after initialization
+            loadAnalysis();
+        }
+
+        // Function to process URL parameters
+        function processUrlParams() {
+            console.log('Processing URL parameters:', { userId, secret, unsubscribeToken });
+            
+            // Handle unsubscribe token if present
+            if (unsubscribeToken) {
+                const functions = new Functions(client);
+                
+                // Show loading notification
+                showLoadingNotification('Processing your unsubscribe request...');
+                
+                // Function to execute account deletion with retry logic
+                const executeAccountDeletion = async (retryCount = 0, maxRetries = 5) => {
+                    try {
+                        // Call the account deletion function with the token as the body
+                        const response = await functions.createExecution(
+                            FUNCTION_ID,
+                            unsubscribeToken
+                        );
+
+                        if (response.status === 'completed') {
+                            showSuccessNotification('Unsubscribed', 'You have been successfully unsubscribed and your account has been deleted.');
+                        } else {
+                            throw new Error('Function execution failed');
+                        }
+                    } catch (error) {
+                        console.error(`Unsubscribe error (attempt ${retryCount + 1}):`, error);
+                        
+                        // If we haven't reached max retries, try again
+                        if (retryCount < maxRetries) {
+                            // Calculate exponential backoff delay (1s, 2s, 4s, 8s, 16s)
+                            const delay = Math.pow(2, retryCount) * 1000;
+                            
+                            // Update loading message to show retry status
+                            loadingMessage.textContent = `Processing your unsubscribe request... (Retry ${retryCount + 1}/${maxRetries})`;
+                            
+                            // Try again after delay
+                            setTimeout(() => executeAccountDeletion(retryCount + 1, maxRetries), delay);
+                        } else {
+                            // All retries failed
+                            showErrorNotification(
+                                'Request Failed', 
+                                'Failed to process your unsubscribe request after multiple attempts. Please try again later or contact support.'
+                            );
+                        }
+                    }
+                };
+                
+                // Start the deletion process with retry
+                executeAccountDeletion();
+            }
+            
+            // If both parameters exist, complete the verification process
+            if (userId && secret) {
+                try {
+                    showLoadingNotification('Verifying your email...');
+                    
+                    account.updateVerification(userId, secret)
+                        .then(() => {
+                            showSuccessNotification('Verification Successful', 'Email verification successful! Your subscription is now active.');
+                        })
+                        .catch(error => {
+                            console.error('Verification error:', error);
+                            showErrorNotification('Verification Failed', 'The link may have expired or already been used.');
+                        });
+                } catch (error) {
+                    console.error('Verification error:', error);
+                    showErrorNotification('Verification Error', 'An unexpected error occurred during verification.');
+                }
+            }
+        }
+
+        fetch('/parameters/public')
+            .then(response => response.json())
+            .then(envVars => {
+                console.log('Loaded environment variables:', envVars);
+                APPWRITE_ENDPOINT = envVars.endpoint;
+                APPWRITE_PROJECT_ID = envVars.project;
+                DATABASE_ID = envVars.database;
+                COLLECTION_ID = envVars.collection;
+                FUNCTION_ID = envVars.deleteFunctionId;
+
+                // Initialize Appwrite after variables are set
+                initializeAppwrite();
+            })
+            .catch(error => {
+                console.error('Error loading environment variables:', error);
+                showError();
+            });
 
         let currentVersion = '1.8.x';
         let analysesCache = { '1.7.x': [], '1.8.x': [] };
 
         // Load analysis data
         async function loadAnalysis(version = null) {
+            if (!databases) {
+                console.error('Appwrite not initialized yet');
+                showError();
+                return;
+            }
+            
             if (version) {
                 currentVersion = version;
             }
@@ -1572,83 +1695,9 @@
         // Modal functionality
         document.addEventListener('DOMContentLoaded', function() {
             // Existing initialization
-            console.log('DOM loaded, starting analysis...');
+            console.log('DOM loaded');
             
-            // Check for URL parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            const userId = urlParams.get('userId');
-            const secret = urlParams.get('secret');
-            const unsubscribeToken = urlParams.get('unsubscribeToken');
-            
-            // Handle unsubscribe token if present
-            if (unsubscribeToken) {
-                const { Functions } = Appwrite;
-                const functions = new Functions(client);
-                
-                // Show loading notification instead of alert
-                showLoadingNotification('Processing your unsubscribe request...');
-                
-                // Function to execute account deletion with retry logic
-                const executeAccountDeletion = async (retryCount = 0, maxRetries = 5) => {
-                    try {
-                        // Call the account deletion function with the token as the body
-                        const response = await functions.createExecution(
-                            '68965a750018504bab79',
-                            unsubscribeToken
-                        );
-
-                        if (response.status === 'completed') {
-                            showSuccessNotification('Unsubscribed', 'You have been successfully unsubscribed and your account has been deleted.');
-                        } else {
-                            throw new Error('Function execution failed');
-                        }
-                    } catch (error) {
-                        console.error(`Unsubscribe error (attempt ${retryCount + 1}):`, error);
-                        
-                        // If we haven't reached max retries, try again
-                        if (retryCount < maxRetries) {
-                            // Calculate exponential backoff delay (1s, 2s, 4s, 8s, 16s)
-                            const delay = Math.pow(2, retryCount) * 1000;
-                            
-                            // Update loading message to show retry status
-                            loadingMessage.textContent = `Processing your unsubscribe request... (Retry ${retryCount + 1}/${maxRetries})`;
-                            
-                            // Try again after delay
-                            setTimeout(() => executeAccountDeletion(retryCount + 1, maxRetries), delay);
-                        } else {
-                            // All retries failed
-                            showErrorNotification(
-                                'Request Failed', 
-                                'Failed to process your unsubscribe request after multiple attempts. Please try again later or contact support.'
-                            );
-                        }
-                    }
-                };
-                
-                // Start the deletion process with retry
-                executeAccountDeletion();
-            }
-            
-            // If both parameters exist, complete the verification process
-            if (userId && secret) {
-                try {
-                    showLoadingNotification('Verifying your email...');
-                    
-                    account.updateVerification(userId, secret)
-                        .then(() => {
-                            showSuccessNotification('Verification Successful', 'Email verification successful! Your subscription is now active.');
-                        })
-                        .catch(error => {
-                            console.error('Verification error:', error);
-                            showErrorNotification('Verification Failed', 'The link may have expired or already been used.');
-                        });
-                } catch (error) {
-                    console.error('Verification error:', error);
-                    showErrorNotification('Verification Error', 'An unexpected error occurred during verification.');
-                }
-            }
-            
-            loadAnalysis();
+            // Note: URL parameter processing moved to processUrlParams()
             
             // How it works modal controls
             const howItWorksModal = document.getElementById('howItWorksModal');
@@ -1823,7 +1872,11 @@
         });
 
         // Auto-refresh every 5 minutes
-        setInterval(() => loadAnalysis(currentVersion), 5 * 60 * 1000);
+        setInterval(() => {
+            if (databases) {
+                loadAnalysis(currentVersion);
+            }
+        }, 5 * 60 * 1000);
     </script>
 </body>
 </html>
