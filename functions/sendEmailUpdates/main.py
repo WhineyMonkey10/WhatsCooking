@@ -100,5 +100,5 @@ def main(context):
             users=[subscriber['$id']]
         )
         
-        return context.res.empty()
+    return context.res.empty()
 
