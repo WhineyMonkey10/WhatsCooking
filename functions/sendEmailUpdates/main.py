@@ -97,7 +97,8 @@ def main(context):
 </html>
 
             """,
-            users=[subscriber['$id']]
+            users=[subscriber['$id']],
+            html=True
         )
         
     return context.res.empty()
