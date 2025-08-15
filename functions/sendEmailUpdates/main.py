@@ -5,9 +5,17 @@ from appwrite.id import ID
 from appwrite.query import Query
 import os
 import dotenv
+import datetime
+# Replace direct Gemini import with Langchain imports
+from langchain.chat_models import init_chat_model
+from langchain_core.messages import HumanMessage, SystemMessage
+
+# Configure Gemini
 
 dotenv.load_dotenv()
 
+# Initialize the LLM using Langchain instead of direct Gemini API
+llm = init_chat_model("gemini-2.5-flash", model_provider="google_genai")
 
 # note: due to me not figuring out a way to send all emails all in one batch with a custom footer for each email
 # this code will loop trhough all subscribers to generate their unsubscribe token
@@ -29,6 +37,27 @@ def main(context):
     branch_contents = {}
     tracked_branches = os.getenv('GITHUB_REPO_TRACKED_BRANCHES').split(',')
     
+    # Calculate the time range based on email frequency
+    # Determine time period based on frequency
+    frequency = os.getenv('EMAIL_FREQUENCY', 'weekly').lower()
+    current_time = datetime.datetime.now()
+    
+    if frequency == 'daily':
+        # Past 24 hours
+        time_limit = current_time - datetime.timedelta(days=1)
+    elif frequency == 'weekly':
+        # Past 7 days
+        time_limit = current_time - datetime.timedelta(days=7)
+    elif frequency == 'monthly':
+        # Past 30 days
+        time_limit = current_time - datetime.timedelta(days=30)
+    else:
+        # Default to weekly if unknown frequency
+        time_limit = current_time - datetime.timedelta(days=7)
+    
+    # Format the time for Appwrite query
+    time_limit_iso = time_limit.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    
     # Get latest analysis for each tracked branch
     for branch in tracked_branches:
         branch = branch.strip()
@@ -38,15 +67,78 @@ def main(context):
                 os.getenv('APPWRITE_ANALYSIS_COLLECTION'), 
                 queries=[
                     Query.equal("trackedVersion", branch),
+                    Query.greater("$createdAt", time_limit_iso),
                     Query.order_desc("$createdAt"),
-                    Query.limit(1)
-                ]
+                    ]
             )
             
             if latest_analysis['documents']:
-                branch_contents[branch] = latest_analysis['documents'][0]['newFeaturesAnalysis']
+                # Collect all analyses from the time period for Gemini to process
+                analyses_text = []
+                dates = []
+                
+                for doc in latest_analysis['documents']:
+                    # Only include if it has content
+                    if doc['newFeaturesAnalysis'] and len(doc['newFeaturesAnalysis'].strip()) > 0:
+                        analyses_text.append(doc['newFeaturesAnalysis'])
+                        dates.append(doc['$createdAt'])
+                
+                if analyses_text:
+                    # Use Langchain to process content instead of direct Gemini API
+                    try:
+                        # Create a system message with instructions
+                        system_prompt = f"""You are an expert technical analyst summarizing Appwrite feature developments for branch {branch}.
+You're creating a summary of multiple analysis reports from the past {frequency} period.
+
+Create a concise summary that:
+1. Highlights the most important potential features or changes
+2. Groups related changes together
+3. Shows progression of features over time if applicable
+4. Provides a clear, organized overview suitable for an email newsletter
+
+Your response should use HTML formatting (just basic tags like <h3>, <p>, <ul>, <li>) as it will be displayed in an email.
+Be informative but concise."""
+
+                        # Create the human message with the analyses data
+                        analyses_content = "\n\n".join([f"ANALYSIS {i+1} (Date: {dates[i]}):\n{text}" for i, text in enumerate(analyses_text)])
+                        human_prompt = f"Here are {len(analyses_text)} analyses to summarize, listed from newest to oldest:\n\n{analyses_content}"
+                        
+                        # Use Langchain to generate content
+                        response = llm.invoke([
+                            SystemMessage(system_prompt),
+                            HumanMessage(human_prompt)
+                        ])
+                        
+                        # Extract the text content from the response
+                        summarized_analysis = response.content
+                        
+                        # Use the Langchain-generated summary
+                        branch_contents[branch] = summarized_analysis
+                        
+                    except Exception as e:
+                        # If Langchain processing fails, use the most recent analysis with error note
+                        branch_contents[branch] = analyses_text[0]
+                        branch_contents[branch] = f"Note: Automatic summary unavailable. Here's the most recent analysis:\n\n{branch_contents[branch]}"
+                        print(f"Error using Langchain/Gemini API: {str(e)}")
+                else:
+                    branch_contents[branch] = "No meaningful updates found for this branch in the specified time period."
             else:
-                branch_contents[branch] = "No recent updates available for this branch."
+                # Fall back to just getting the most recent document without time filtering
+                fallback_analysis = databases.list_documents(
+                    os.getenv('APPWRITE_DATABASE'), 
+                    os.getenv('APPWRITE_ANALYSIS_COLLECTION'), 
+                    queries=[
+                        Query.equal("trackedVersion", branch),
+                        Query.order_desc("$createdAt"),
+                        Query.limit(1)
+                    ]
+                )
+                
+                if fallback_analysis['documents']:
+                    branch_contents[branch] = fallback_analysis['documents'][0]['newFeaturesAnalysis']
+                    branch_contents[branch] = "No recent updates available for this branch in the past " + frequency + " period. Here's the latest update: \n\n" + branch_contents[branch]
+                else:
+                    branch_contents[branch] = "No updates available for this branch."
         except Exception as e:
             branch_contents[branch] = f"Error retrieving updates: {str(e)}"
     
