@@ -42,3 +42,5 @@ next-env.d.ts
 
 # other stuff
 .vscode
+
+appwrite.json
