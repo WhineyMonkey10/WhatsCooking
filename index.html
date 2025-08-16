@@ -1345,7 +1345,7 @@
             }
         }
 
-        fetch('/parameters/public')
+        fetch('/api/public')
             .then(response => response.json())
             .then(envVars => {
                 console.log('Loaded environment variables:', envVars);
