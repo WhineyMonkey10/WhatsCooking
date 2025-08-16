@@ -1,16 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // This configures Next.js to treat HTML files as static assets
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.html$/,
-      type: 'asset/resource',
-      generator: {
-        filename: 'static/[hash][ext]',
+  // Serve HTML files directly
+  async rewrites() {
+    return [
+      {
+        source: '/index.html',
+        destination: '/index.html',
       },
-    });
-    return config;
+      {
+        source: '/delete.html',
+        destination: '/delete.html',
+      },
+    ];
   },
 };
 

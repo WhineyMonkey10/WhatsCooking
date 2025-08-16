@@ -1879,8 +1879,13 @@
                 } catch (error) {
                     console.error('General subscription error:', error);
                     showSubscriptionError('Failed to subscribe. Please try again later.');
+                } finally {
+                    // Ensure button is reset in case of any unexpected errors
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonContent;
                 }
             });
+            }
 
             function showSubscriptionSuccess(msg) {
                 subscriptionForm.style.display = 'none';
@@ -1924,6 +1929,7 @@
                 loadAnalysis(currentVersion);
             }
         }, 5 * 60 * 1000);
+    
     </script>
 </body>
 </html>

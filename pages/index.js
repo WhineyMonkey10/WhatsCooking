@@ -1,20 +1,24 @@
 import { useEffect } from 'react';
-import fs from 'fs';
-import path from 'path';
-import HTMLRenderer from '../components/HTMLRenderer';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
 
-export default function Home({ htmlContent }) {
-  return <HTMLRenderer htmlContent={htmlContent} />;
-}
-
-// This gets called at build time
-export async function getStaticProps() {
-  const filePath = path.join(process.cwd(), 'index.html');
-  const htmlContent = fs.readFileSync(filePath, 'utf8');
+export default function Home() {
+  const router = useRouter();
   
-  return {
-    props: {
-      htmlContent,
-    },
-  };
+  useEffect(() => {
+    // Client-side redirect to the static HTML file
+    window.location.href = '/index.html';
+  }, []);
+
+  return (
+    <>
+      <Head>
+        <title>What's Cooking? - Appwrite Commit Analysis</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      </Head>
+      <div>
+        <p>Loading...</p>
+      </div>
+    </>
+  );
 }

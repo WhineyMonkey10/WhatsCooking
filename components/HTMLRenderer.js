@@ -32,16 +32,45 @@ export default function HTMLRenderer({ htmlContent }) {
       containerRef.current.innerHTML = tempEl.innerHTML;
     }
 
-    // Handle scripts separately to ensure they execute
-    const scripts = tempEl.querySelectorAll('script');
-    scripts.forEach(oldScript => {
-      const newScript = document.createElement('script');
-      Array.from(oldScript.attributes).forEach(attr => {
-        newScript.setAttribute(attr.name, attr.value);
-      });
-      newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-      document.body.appendChild(newScript);
-    });
+    // Execute scripts after a small delay to ensure DOM elements are fully loaded
+    setTimeout(() => {
+      try {
+        // Handle scripts separately to ensure they execute
+        const scripts = tempEl.querySelectorAll('script');
+        if (scripts && scripts.length > 0) {
+          // Convert NodeList to Array for safer handling
+          Array.from(scripts).forEach(oldScript => {
+            try {
+              const newScript = document.createElement('script');
+              // Copy attributes
+              if (oldScript.attributes && oldScript.attributes.length > 0) {
+                Array.from(oldScript.attributes).forEach(attr => {
+                  newScript.setAttribute(attr.name, attr.value);
+                });
+              }
+              
+              // Handle inline scripts
+              if (oldScript.innerHTML) {
+                // Wrap in IIFE to prevent global variable conflicts
+                const safeContent = `
+                  (function() { 
+                    ${oldScript.innerHTML}
+                  })();
+                `;
+                newScript.text = safeContent;
+              }
+              
+              // Append to document
+              document.body.appendChild(newScript);
+            } catch (scriptError) {
+              console.error('Error processing script:', scriptError);
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error processing scripts:', error);
+      }
+    }, 100); // Small delay to ensure DOM is ready
 
     // Set document title if present
     const titleTag = tempEl.querySelector('title');
