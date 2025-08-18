@@ -9,6 +9,8 @@ import datetime
 # Replace direct Gemini import with Langchain imports
 from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage, SystemMessage
+import json
+
 
 # Configure Gemini
 
@@ -35,7 +37,15 @@ def main(context):
     
     # Initialize content string for each tracked branch
     branch_contents = {}
-    tracked_branches = os.getenv('GITHUB_REPO_TRACKED_BRANCHES').split(',')
+    
+    # Parse the tracked branches properly - convert from JSON string to list
+    tracked_branches_raw = os.getenv('GITHUB_REPO_TRACKED_BRANCHES', '[]')
+    try:
+        # Try to parse as JSON
+        tracked_branches = json.loads(tracked_branches_raw)
+    except json.JSONDecodeError:
+        # If JSON parsing fails, fallback to splitting by comma
+        tracked_branches = [branch.strip() for branch in os.getenv('GITHUB_REPO_TRACKED_BRANCHES', '').split(',')]
     
     # Calculate the time range based on email frequency
     # Determine time period based on frequency
@@ -60,14 +70,16 @@ def main(context):
     
     # Get latest analysis for each tracked branch
     for branch in tracked_branches:
-        branch = branch.strip()
+        # Clean the branch name to remove any quotes or brackets
+        branch = branch.strip('[]"\' ')
+        
         try:
             latest_analysis = databases.list_documents(
                 os.getenv('APPWRITE_DATABASE'), 
                 os.getenv('APPWRITE_ANALYSIS_COLLECTION'), 
                 queries=[
                     Query.equal("trackedVersion", branch),
-                    Query.greater("$createdAt", time_limit_iso),
+                    Query.greaterThan("$createdAt", time_limit_iso),
                     Query.order_desc("$createdAt"),
                     ]
             )
@@ -196,10 +208,13 @@ Be informative but concise."""
         # Build branch sections
         branch_sections = []
         for branch, content in branch_contents.items():
+            # Remove any square brackets or quotes from the branch name
+            clean_branch = branch.strip('[]"\' ')
+            
             branch_section = f"""
-            <!-- {branch} Section -->
+            <!-- {clean_branch} Section -->
             <div style="margin: 1.25rem 0; padding: 1rem; background-color: white; border-radius: 0.5rem; border: 1px solid #e5e7eb;">
-                <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #1f2937;">{os.getenv('TRACKED_REPO_NAME')} {branch}</h3>
+                <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #1f2937;">{os.getenv('TRACKED_REPO_NAME')} {clean_branch}</h3>
                 <div style="color: #4b5563;">
                     {content}
                 </div>
