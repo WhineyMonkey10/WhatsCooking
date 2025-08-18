@@ -107,7 +107,7 @@ Create a concise summary that:
 3. Shows progression of features over time if applicable
 4. Provides a clear, organized overview suitable for an email newsletter
 
-Your response should use HTML formatting (just basic tags like <h3>, <p>, <ul>, <li>) as it will be displayed in an email.
+Your response should use HTML formatting (just basic tags like <h3>, <p>, <ul>, <li>) as it will be displayed in an email. Do NOT put anything such as ```html ``` in the response, the HTML formatting is handled automatically.
 Be informative but concise."""
 
                         # Create the human message with the analyses data
