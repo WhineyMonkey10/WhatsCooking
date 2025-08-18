@@ -79,7 +79,7 @@ def main(context):
                 os.getenv('APPWRITE_ANALYSIS_COLLECTION'), 
                 queries=[
                     Query.equal("trackedVersion", branch),
-                    Query.greaterThan("$createdAt", time_limit_iso),
+                    Query.greater_than("$createdAt", time_limit_iso),
                     Query.order_desc("$createdAt"),
                     ]
             )
