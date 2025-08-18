@@ -74,19 +74,16 @@ def main(context):
         branch = branch.strip('[]"\' ')
         
         try:
-            print("getting latest info")
             latest_analysis = databases.list_documents(
                 database_id=os.getenv('APPWRITE_DATABASE'), 
-                collection_id=os.getenv('APPWRITE_ANALYSIS_COLLECTION'), 
+                collection_id=os.getenv('APPWRITE_PUBLIC_COLLECTION'), 
                 queries=[
                     Query.equal("trackedVersion", branch),
                     Query.greater_than("$createdAt", time_limit_iso),
                     Query.order_desc("$createdAt"),
                     ]
             )
-            print("got latest info")
             if latest_analysis['documents']:
-                print("parsing documents")
                 # Collect all analyses from the time period for Gemini to process
                 analyses_text = []
                 dates = []
@@ -140,7 +137,7 @@ Be informative but concise."""
                 # Fall back to just getting the most recent document without time filtering
                 fallback_analysis = databases.list_documents(
                     database_id=os.getenv('APPWRITE_DATABASE'), 
-                    collection_id=os.getenv('APPWRITE_ANALYSIS_COLLECTION'), 
+                    collection_id=os.getenv('APPWRITE_PUBLIC_COLLECTION'), 
                     queries=[
                         Query.equal("trackedVersion", branch),
                         Query.order_desc("$createdAt"),
