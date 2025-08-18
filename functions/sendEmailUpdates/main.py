@@ -177,7 +177,6 @@ Here is an example of a well done email:
                         # If Langchain processing fails, use the most recent analysis with error note
                         branch_contents[branch] = analyses_text[0]
                         branch_contents[branch] = f"Note: Automatic summary unavailable. Here's the most recent analysis:\n\n{branch_contents[branch]}"
-                        print(f"Error using Langchain/Gemini API: {str(e)}")
                 else:
                     branch_contents[branch] = "No meaningful updates found for this branch in the specified time period."
             else:
