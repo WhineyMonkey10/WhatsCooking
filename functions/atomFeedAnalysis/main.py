@@ -70,8 +70,10 @@ def main(context):
     newFeatures = []
     for versionToTrack in tracked_versions:
         feed = feedparser.parse(f"https://github.com/{os.getenv('GITHUB_USERNAME_OF_REPO_OWNER')}/{os.getenv('GITHUB_REPO_NAME')}/commits/{versionToTrack}.atom")
+        print(feed)
         for entry in feed.entries[:5]:
             api_url = f"https://api.github.com/repos/{os.getenv('GITHUB_USERNAME_OF_REPO_OWNER')}/{os.getenv('GITHUB_REPO_NAME')}/commits/{extract_sha(entry.link)}"
+            print(api_url)
             response = requests.get(api_url, headers=headers)
             if response.status_code == 200:
                 commit_data = response.json()
