@@ -75,8 +75,8 @@ def main(context):
         
         try:
             latest_analysis = databases.list_documents(
-                os.getenv('APPWRITE_DATABASE'), 
-                os.getenv('APPWRITE_ANALYSIS_COLLECTION'), 
+                database_id=os.getenv('APPWRITE_DATABASE'), 
+                collection_id=os.getenv('APPWRITE_ANALYSIS_COLLECTION'), 
                 queries=[
                     Query.equal("trackedVersion", branch),
                     Query.greater_than("$createdAt", time_limit_iso),
