@@ -161,14 +161,14 @@
     </div>
 
     <script>
-        // Appwrite configuration
-        const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
-        const APPWRITE_PROJECT_ID = '6890d2c90034c3369acd';
+        // Appwrite configuration (will be loaded from API)
+        let APPWRITE_ENDPOINT = '';
+        let APPWRITE_PROJECT_ID = '';
+        let APPWRITE_DELETION_FUNCTION_ID = '';
 
         // Initialize Appwrite
         const { Client, Account, ID, Functions } = Appwrite;
         const client = new Client();
-        client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
         const account = new Account(client);
         const functions = new Functions(client);
 
@@ -197,62 +197,100 @@
             homeButton.style.display = 'inline-flex';
         }
 
-        // Process account deletion when page loads
+                // Process account deletion when page loads
         document.addEventListener('DOMContentLoaded', async function() {
-            // Check for URL parameters
+            console.log('DOM loaded for delete page');
+            
+            // Re-extract URL parameters directly from window.location.search to ensure they're current
             const urlParams = new URLSearchParams(window.location.search);
             const userId = urlParams.get('userId');
             const secret = urlParams.get('secret');
             
+            console.log('URL parameters at page load:', { 
+                userId, 
+                secret, 
+                rawSearch: window.location.search
+            });
+            
+            // Check for URL parameters immediately
             if (!userId || !secret) {
                 showError('Invalid deletion link. Missing required parameters.');
                 return;
             }
             
+            // Update loading status to show we're waiting for API
+            const loadingMessage = document.querySelector('#loadingStatus p');
+            loadingMessage.textContent = 'Preparing to process your account deletion request...';
+            
+            // First, fetch the Appwrite configuration
             try {
-                // First, try to create a session with the provided parameters
-                await account.updateMagicURLSession(userId, secret);
+                const response = await fetch('/api/public');
+                const envVars = await response.json();
                 
-                // If session creation successful, delete the account using cloud function with retry logic
-                const executeAccountDeletion = async (retryCount = 0, maxRetries = 5) => {
-                    try {
-                        // Call the account deletion cloud function
-                        const execution = await functions.createExecution(
-                            '68965a750018504bab79'  // Cloud function ID
-                        );
+                APPWRITE_ENDPOINT = envVars.endpoint;
+                APPWRITE_PROJECT_ID = envVars.project;
+                APPWRITE_DELETION_FUNCTION_ID = envVars.deleteFunctionId;
+                
+                // Initialize Appwrite client with the fetched config
+                client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
+                
+                console.log('Appwrite initialized with config:', {
+                    APPWRITE_ENDPOINT,
+                    APPWRITE_PROJECT_ID,
+                    APPWRITE_DELETION_FUNCTION_ID
+                });
+                
+                // Update loading message now that we're ready to process
+                loadingMessage.textContent = 'Processing your account deletion request...';
+            
+                try {
+                    // First, try to create a session with the provided parameters
+                    await account.updateMagicURLSession(userId, secret);
+                    
+                    // If session creation successful, delete the account using cloud function with retry logic
+                    const executeAccountDeletion = async (retryCount = 0, maxRetries = 5) => {
+                        try {
+                            // Call the account deletion cloud function
+                            const execution = await functions.createExecution(
+                                APPWRITE_DELETION_FUNCTION_ID  // Cloud function ID from API
+                            );
 
-                        if (execution.status === 'completed') {
-                            showSuccess();
-                        } else {
-                            throw new Error('Function execution failed: ' + execution.statusText);
-                        }
-                    } catch (deleteError) {
-                        console.error(`Error deleting account (attempt ${retryCount + 1}):`, deleteError);
-                        
-                        // If we haven't reached max retries, try again
-                        if (retryCount < maxRetries) {
-                            // Calculate exponential backoff delay (1s, 2s, 4s, 8s, 16s)
-                            const delay = Math.pow(2, retryCount) * 1000;
+                            if (execution.status === 'completed') {
+                                showSuccess();
+                            } else {
+                                throw new Error('Function execution failed: ' + execution.statusText);
+                            }
+                        } catch (deleteError) {
+                            console.error(`Error deleting account (attempt ${retryCount + 1}):`, deleteError);
                             
-                            // Update loading message to show retry status
-                            const loadingMessage = document.querySelector('#loadingStatus p');
-                            loadingMessage.textContent = `Processing your account deletion request... (Retry ${retryCount + 1}/${maxRetries})`;
-                            
-                            // Try again after delay
-                            setTimeout(() => executeAccountDeletion(retryCount + 1, maxRetries), delay);
-                        } else {
-                            // All retries failed
-                            showError('Failed to delete account after multiple attempts. Please try again later or contact support.');
+                            // If we haven't reached max retries, try again
+                            if (retryCount < maxRetries) {
+                                // Calculate exponential backoff delay (1s, 2s, 4s, 8s, 16s)
+                                const delay = Math.pow(2, retryCount) * 1000;
+                                
+                                // Update loading message to show retry status
+                                const loadingMessage = document.querySelector('#loadingStatus p');
+                                loadingMessage.textContent = `Processing your account deletion request... (Retry ${retryCount + 1}/${maxRetries})`;
+                                
+                                // Try again after delay
+                                setTimeout(() => executeAccountDeletion(retryCount + 1, maxRetries), delay);
+                            } else {
+                                // All retries failed
+                                showError('Failed to delete account after multiple attempts. Please try again later or contact support.');
+                            }
                         }
-                    }
-                };
-                
-                // Start the deletion process with retry
-                executeAccountDeletion();
-                
-            } catch (sessionError) {
-                console.error('Error creating session:', sessionError);
-                showError('Authentication failed. The link may have expired or already been used.');
+                    };
+                    
+                    // Start the deletion process with retry
+                    executeAccountDeletion();
+                    
+                } catch (sessionError) {
+                    console.error('Error creating session:', sessionError);
+                    showError('Authentication failed. The link may have expired or already been used.');
+                }
+            } catch (configError) {
+                console.error('Error fetching application configuration:', configError);
+                showError('Could not load application configuration. Please try again later.');
             }
         });
     </script>

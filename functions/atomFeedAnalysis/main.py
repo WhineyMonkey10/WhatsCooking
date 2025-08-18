@@ -48,8 +48,8 @@ def get_new_lines(patch):
 
 def main(context):
     client = Client()
-    client.set_endpoint('https://fra.cloud.appwrite.io/v1')
-    client.set_project('6890d2c90034c3369acd')
+    client.set_endpoint(os.getenv('APPWRITE_ENDPOINT'))
+    client.set_project(os.getenv('APPWRITE_PROJECT'))
     client.set_key(context.req.headers.get('x-appwrite-key'))
     
     databases = Databases(client)
@@ -66,12 +66,13 @@ def main(context):
     change the cronjob stuff
     """
     #tracked_versions = context.req.body.get('trackedVersions', [])
-    tracked_versions = ["1.7.x", "1.8.x"]
+    tracked_versions = os.getenv('GITHUB_REPO_TRACKED_BRANCHES')
+    tracked_versions = tracked_versions.split(',') if tracked_versions else []
     newFeatures = []
     for versionToTrack in tracked_versions:
-        feed = feedparser.parse(f"https://github.com/appwrite/appwrite/commits/{versionToTrack}.atom")
+        feed = feedparser.parse(f"https://github.com/{os.getenv('GITHUB_USERNAME_OF_REPO_OWNER')}/{os.getenv('GITHUB_REPO_NAME')}/commits/{versionToTrack}.atom")
         for entry in feed.entries[:5]:
-            api_url = f"https://api.github.com/repos/appwrite/appwrite/commits/{extract_sha(entry.link)}"
+            api_url = f"https://api.github.com/repos/{os.getenv('GITHUB_USERNAME_OF_REPO_OWNER')}/{os.getenv('GITHUB_REPO_NAME')}/commits/{extract_sha(entry.link)}"
             response = requests.get(api_url, headers=headers)
             if response.status_code == 200:
                 commit_data = response.json()
@@ -119,8 +120,8 @@ def main(context):
         #print(summary_response)
         
         databases.create_document(
-            database_id = '6890ded500064cf8b023',
-            collection_id = '6890dee0000a5ecd829e',
+            database_id = os.getenv('APPWRITE_DATABASE'),
+            collection_id = os.getenv('APPWRITE_PUBLIC_COLLECTION'),
             document_id = ID.unique(),
             data = {
                 "summary": summary_response,
@@ -131,10 +132,10 @@ def main(context):
 
             )
         
-    functions.create_execution(
-        "6897d16d000a3bbd22fb",
-        xasync=True
-    )
+    #functions.create_execution(
+    #    os.getenv('APPWRITE_SEND_EMAIL_UPDATES_FUNCTION_ID'),
+    #    xasync=True
+    #)
     
     
     return context.res.empty()

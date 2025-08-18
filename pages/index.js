@@ -1,0 +1,25 @@
+import { useEffect } from 'react';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+
+export default function Home() {
+  const router = useRouter();
+  
+  useEffect(() => {
+    // Client-side redirect to the static HTML file with URL parameters preserved
+    const queryString = window.location.search;
+    window.location.href = `/index.html${queryString}`;
+  }, []);
+
+  return (
+    <>
+      <Head>
+        <title>What's Cooking? - Appwrite Commit Analysis</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      </Head>
+      <div>
+        <p>Loading...</p>
+      </div>
+    </>
+  );
+}
