@@ -6,8 +6,9 @@ export default function Home() {
   const router = useRouter();
   
   useEffect(() => {
-    // Client-side redirect to the static HTML file
-    window.location.href = '/index.html';
+    // Client-side redirect to the static HTML file with URL parameters preserved
+    const queryString = window.location.search;
+    window.location.href = `/index.html${queryString}`;
   }, []);
 
   return (

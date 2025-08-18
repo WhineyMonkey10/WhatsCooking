@@ -6,8 +6,9 @@ export default function Delete() {
   const router = useRouter();
   
   useEffect(() => {
-    // Client-side redirect to the static HTML file
-    window.location.href = '/delete.html';
+    // Client-side redirect to the static HTML file with URL parameters preserved
+    const queryString = window.location.search;
+    window.location.href = `/delete.html${queryString}`;
   }, []);
 
   return (

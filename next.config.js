@@ -1,16 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Serve HTML files directly
+  // Serve HTML files directly with preserved query parameters
   async rewrites() {
     return [
       {
-        source: '/index.html',
-        destination: '/index.html',
+        source: '/index.html:path*',
+        destination: '/index.html:path*',
       },
       {
-        source: '/delete.html',
-        destination: '/delete.html',
+        source: '/delete.html:path*',
+        destination: '/delete.html:path*',
       },
     ];
   },

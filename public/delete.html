@@ -199,6 +199,29 @@
 
                 // Process account deletion when page loads
         document.addEventListener('DOMContentLoaded', async function() {
+            console.log('DOM loaded for delete page');
+            
+            // Re-extract URL parameters directly from window.location.search to ensure they're current
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('userId');
+            const secret = urlParams.get('secret');
+            
+            console.log('URL parameters at page load:', { 
+                userId, 
+                secret, 
+                rawSearch: window.location.search
+            });
+            
+            // Check for URL parameters immediately
+            if (!userId || !secret) {
+                showError('Invalid deletion link. Missing required parameters.');
+                return;
+            }
+            
+            // Update loading status to show we're waiting for API
+            const loadingMessage = document.querySelector('#loadingStatus p');
+            loadingMessage.textContent = 'Preparing to process your account deletion request...';
+            
             // First, fetch the Appwrite configuration
             try {
                 const response = await fetch('/api/public');
@@ -211,15 +234,14 @@
                 // Initialize Appwrite client with the fetched config
                 client.setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
                 
-                // Check for URL parameters
-                const urlParams = new URLSearchParams(window.location.search);
-                const userId = urlParams.get('userId');
-                const secret = urlParams.get('secret');
+                console.log('Appwrite initialized with config:', {
+                    APPWRITE_ENDPOINT,
+                    APPWRITE_PROJECT_ID,
+                    APPWRITE_DELETION_FUNCTION_ID
+                });
                 
-                if (!userId || !secret) {
-                    showError('Invalid deletion link. Missing required parameters.');
-                    return;
-                }
+                // Update loading message now that we're ready to process
+                loadingMessage.textContent = 'Processing your account deletion request...';
             
                 try {
                     // First, try to create a session with the provided parameters

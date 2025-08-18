@@ -1275,7 +1275,18 @@
 
         // Function to process URL parameters
         function processUrlParams() {
-            console.log('Processing URL parameters:', { userId, secret, unsubscribeToken });
+            // Re-extract URL parameters to ensure they're current
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('userId');
+            const secret = urlParams.get('secret');
+            const unsubscribeToken = urlParams.get('unsubscribeToken');
+            
+            console.log('Processing URL parameters:', { 
+                userId, 
+                secret, 
+                unsubscribeToken,
+                rawSearch: window.location.search
+            });
             
             // Handle unsubscribe token if present
             if (unsubscribeToken) {
@@ -1697,7 +1708,28 @@
             // Existing initialization
             console.log('DOM loaded');
             
-            // Note: URL parameter processing moved to processUrlParams()
+            // Check for URL parameters immediately even before Appwrite is initialized
+            // This gives visual feedback to the user while we wait for config to load
+            // Re-extract URL parameters directly from window.location.search to ensure they're current
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('userId');
+            const secret = urlParams.get('secret');
+            const unsubscribeToken = urlParams.get('unsubscribeToken');
+            
+            console.log('URL parameters at page load:', { 
+                userId, 
+                secret, 
+                unsubscribeToken,
+                rawSearch: window.location.search
+            });
+            
+            if (userId && secret) {
+                showLoadingNotification('Waiting to verify your email...');
+                console.log('URL verification parameters detected, will process after initialization');
+            } else if (unsubscribeToken) {
+                showLoadingNotification('Waiting to process your unsubscribe request...');
+                console.log('Unsubscribe token detected, will process after initialization');
+            }
             
             // How it works modal controls
             const howItWorksModal = document.getElementById('howItWorksModal');
