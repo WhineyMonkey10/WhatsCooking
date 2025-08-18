@@ -67,6 +67,7 @@ def main(context):
     """
     #tracked_versions = context.req.body.get('trackedVersions', [])
     tracked_versions = os.getenv('GITHUB_REPO_TRACKED_BRANCHES')
+    tracked_versions = tracked_versions.split(',') if tracked_versions else []
     newFeatures = []
     for versionToTrack in tracked_versions:
         feed = feedparser.parse(f"https://github.com/{os.getenv('GITHUB_USERNAME_OF_REPO_OWNER')}/{os.getenv('GITHUB_REPO_NAME')}/commits/{versionToTrack}.atom")
