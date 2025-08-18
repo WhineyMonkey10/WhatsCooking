@@ -131,10 +131,10 @@ def main(context):
 
             )
         
-    functions.create_execution(
-        os.getenv('APPWRITE_SEND_EMAIL_UPDATES_FUNCTION_ID'),
-        xasync=True
-    )
+    #functions.create_execution(
+    #    os.getenv('APPWRITE_SEND_EMAIL_UPDATES_FUNCTION_ID'),
+    #    xasync=True
+    #)
     
     
     return context.res.empty()
