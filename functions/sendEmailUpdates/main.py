@@ -108,7 +108,54 @@ Create a concise summary that:
 4. Provides a clear, organized overview suitable for an email newsletter
 
 Your response should use HTML formatting (just basic tags like <h3>, <p>, <ul>, <li>) as it will be displayed in an email. Do NOT put anything such as ```html ``` in the response, the HTML formatting is handled automatically.
-Be informative but concise."""
+Be informative but concise.
+
+Here is an example of a well done email:
+
+<div style="color:#4b5563">
+<h3>Appwrite 1.8.x Development Updates: Week of August 12-15, 2025</h3>
+<p>This past week, the Appwrite 1.8.x branch saw significant progress across several key areas, primarily focusing on enhancing database capabilities, functions, and API interactions. Here's a concise overview of the most impactful developments:</p>
+
+<h3>Enhanced Database Operations</h3>
+<ul>
+    <li>
+        <strong>Comprehensive Bulk Document Operations:</strong> A major highlight is the introduction of robust bulk operations for documents. This includes the ability to <strong>create, update (including a new "upsert" event), and delete multiple documents</strong> in a single request. Early indications also suggest similar bulk functionalities for table rows, promising a substantial boost in data management efficiency.
+        <p><small><em>(First noted Aug 14, confirmed and expanded with "upsert" and "create or update" Aug 15)</em></small></p>
+    </li>
+    <li>
+        <strong>Advanced Query Operators:</strong> The database service is gaining a powerful suite of new query operators. These include 'notContains', 'notSearch', 'notBetween', 'notStartsWith', 'notEndsWith', along with time-based queries like 'createdBefore', 'createdAfter', 'updatedBefore', and 'updatedAfter'. These additions enable more precise and complex data filtering.
+        <p><small><em>(Introduced with detailed tests Aug 12, further confirmed Aug 13)</em></small></p>
+    </li>
+    <li>
+        <strong>Cursor-Based Pagination:</strong> To further improve handling large datasets, Appwrite is implementing cursor-based pagination for database queries, offering a more robust and performant way to navigate through results.
+        <p><small><em>(Introduced Aug 13)</em></small></p>
+    </li>
+</ul>
+
+<h3>Functions &amp; API Enhancements</h3>
+<ul>
+    <li>
+        <strong>Robust Functions Queuing System:</strong> Appwrite Functions are being upgraded with a new, customizable Redis-based queuing system. This significant architectural change is set to improve the performance, scalability, and reliability of function executions.
+        <p><small><em>(Introduced Aug 12)</em></small></p>
+    </li>
+    <li>
+        <strong>HTTP HEAD Request Support:</strong> New support for HTTP HEAD requests has been added across the API, allowing users to efficiently retrieve metadata about resources (including specific support for function executions) without downloading the full response body.
+        <p><small><em>(Introduced generally Aug 13, specific to functions Aug 14)</em></small></p>
+    </li>
+</ul>
+
+<h3>Internationalization Improvements</h3>
+<ul>
+    <li>
+        <strong>Fallback Locale Mechanism:</strong> To enhance global usability, Appwrite is introducing a fallback locale mechanism for translations, ensuring a better experience for users in diverse language environments.
+        <p><small><em>(Introduced Aug 13)</em></small></p>
+    </li>
+</ul>
+
+<p>These developments collectively represent a significant step forward for Appwrite's core services, promising more powerful, efficient, and flexible application development.</p>
+                </div>
+
+"""
 
                         # Create the human message with the analyses data
                         analyses_content = "\n\n".join([f"ANALYSIS {i+1} (Date: {dates[i]}):\n{text}" for i, text in enumerate(analyses_text)])
