@@ -1,0 +1,204 @@
+{
+    "projectId": "6890d2c90034c3369acd",
+    "projectName": "WhatsCooking",
+    "settings": {
+        "services": {
+            "account": true,
+            "avatars": true,
+            "databases": true,
+            "locale": true,
+            "health": true,
+            "storage": false,
+            "teams": false,
+            "users": true,
+            "functions": true,
+            "graphql": true,
+            "messaging": true
+        },
+        "auth": {
+            "methods": {
+                "jwt": true,
+                "phone": false,
+                "invites": false,
+                "anonymous": false,
+                "email-otp": false,
+                "magic-url": true,
+                "email-password": true
+            },
+            "security": {
+                "duration": 86400,
+                "limit": 0,
+                "sessionsLimit": 10,
+                "passwordHistory": 0,
+                "passwordDictionary": false,
+                "personalDataCheck": false,
+                "sessionAlerts": false,
+                "mockNumbers": []
+            }
+        }
+    },
+    "functions": [
+        {
+            "$id": "6890de6f000aeef03983",
+            "execute": [],
+            "name": "Atom Feed Analysis",
+            "enabled": true,
+            "logging": true,
+            "runtime": "python-3.12",
+            "scopes": [
+                "documents.write",
+                "execution.write"
+            ],
+            "events": [],
+            "schedule": "0 0 * * *",
+            "timeout": 240,
+            "entrypoint": "main.py",
+            "commands": "pip install -r requirements.txt",
+            "specification": "s-1vcpu-512mb",
+            "path": "functions/Atom Feed Analysis"
+        },
+        {
+            "$id": "68965a750018504bab79",
+            "execute": [
+                "any"
+            ],
+            "name": "Delete Account",
+            "enabled": true,
+            "logging": true,
+            "runtime": "python-3.12",
+            "scopes": [
+                "users.write",
+                "documents.read",
+                "documents.write"
+            ],
+            "events": [],
+            "schedule": "",
+            "timeout": 15,
+            "entrypoint": "main.py",
+            "commands": "pip install -r requirements.txt",
+            "specification": "s-1vcpu-512mb",
+            "path": "functions/Delete Account"
+        },
+        {
+            "$id": "6896664c000d839d3078",
+            "execute": [],
+            "name": "Process User Subscription",
+            "enabled": true,
+            "logging": true,
+            "runtime": "python-3.12",
+            "scopes": [
+                "users.read",
+                "documents.read",
+                "documents.write"
+            ],
+            "events": [
+                "users.*.verification.*.update"
+            ],
+            "schedule": "",
+            "timeout": 15,
+            "entrypoint": "main.py",
+            "commands": "pip install -r requirements.txt",
+            "specification": "s-1vcpu-512mb",
+            "path": "functions/Process User Subscription"
+        },
+        {
+            "$id": "6897d16d000a3bbd22fb",
+            "execute": [],
+            "name": "Send Email Updates",
+            "enabled": true,
+            "logging": true,
+            "runtime": "python-3.12",
+            "scopes": [
+                "documents.read",
+                "messages.write"
+            ],
+            "events": [],
+            "schedule": "0 0 * * 0",
+            "timeout": 30,
+            "entrypoint": "main.py",
+            "commands": "pip install -r requirements.txt",
+            "specification": "s-1vcpu-512mb",
+            "path": "functions/Send Email Updates"
+        }
+    ],
+    "databases": [
+        {
+            "$id": "6890ded500064cf8b023",
+            "name": "AtomProd",
+            "enabled": true
+        }
+    ],
+    "collections": [
+        {
+            "$id": "6890dee0000a5ecd829e",
+            "$permissions": [
+                "read(\"any\")"
+            ],
+            "databaseId": "6890ded500064cf8b023",
+            "name": "analysis",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "summary",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 100000,
+                    "default": null
+                },
+                {
+                    "key": "newFeaturesAnalysis",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 100000,
+                    "default": null
+                },
+                {
+                    "key": "newFeatureFlag",
+                    "type": "boolean",
+                    "required": true,
+                    "array": false,
+                    "default": null
+                },
+                {
+                    "key": "trackedVersion",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 100,
+                    "default": null
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "689791b100072ce22e05",
+            "$permissions": [],
+            "databaseId": "6890ded500064cf8b023",
+            "name": "subscribers",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "email",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "format": "email",
+                    "default": null
+                },
+                {
+                    "key": "accountDeletionVerificationCode",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 1000,
+                    "default": null
+                }
+            ],
+            "indexes": []
+        }
+    ]
+}
